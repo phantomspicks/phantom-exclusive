@@ -41,3 +41,15 @@ body{margin:0;background:radial-gradient(circle at 50% 0,#202020 0,#0b0b0b 34%,#
 .preview-card.unlocked .blurred-content{filter:none;opacity:1}
 .preview-card.unlocked .lock-overlay{display:none}
 .preview-card.unlocked .card-top .preview-lock-label{color:#f4f4f4}
+
+.history-section{margin-top:16px}
+.history-list{display:grid;gap:10px}
+.history-card{border:1px solid #242424;border-radius:14px;padding:14px;background:#0b0b0b}
+.history-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.history-result{font-size:9px;font-weight:950;letter-spacing:.14em;border:1px solid #333;border-radius:999px;padding:7px 9px;white-space:nowrap}
+.history-main{min-width:0;flex:1}
+.history-sport{font-size:8px;color:#777;letter-spacing:.16em;font-weight:900;margin-bottom:5px}
+.history-pick{font-size:14px;font-weight:900;line-height:1.3}
+.history-matchup{font-size:10px;color:#999;margin-top:5px}
+.history-meta{font-size:8px;color:#666;margin-top:8px;display:flex;gap:10px;flex-wrap:wrap}
+.history-empty{font-size:10px;color:#666;text-align:center;padding:18px 8px}

@@ -52,6 +52,39 @@
     return "Last submitted " + d.toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
   }
 
+  function historyDate(iso){
+    if(!iso) return "";
+    const d = new Date(iso);
+    return d.toLocaleDateString([], {month:"short",day:"numeric",year:"numeric"});
+  }
+
+  async function loadHistory(){
+    const { data, error } = await db.from("exclusive_results")
+      .select("result,sport,matchup,pick_text,odds,created_at")
+      .order("created_at",{ascending:false});
+    const wrap = document.getElementById("adminHistory");
+    if(!wrap) return;
+    if(error){
+      wrap.innerHTML = `<div class="history-empty">${error.message}</div>`;
+      return;
+    }
+    if(!data || !data.length){
+      wrap.innerHTML = '<div class="history-empty">No previous Exclusive Plays yet.</div>';
+      return;
+    }
+    wrap.innerHTML = data.map(r => `<div class="history-card">
+      <div class="history-row">
+        <div class="history-main">
+          <div class="history-sport">${r.sport || "EXCLUSIVE PLAY"}</div>
+          <div class="history-pick">${r.pick_text || "Previous Exclusive Play"}</div>
+          <div class="history-matchup">${r.matchup || ""}</div>
+          <div class="history-meta"><span>${r.odds || ""}</span><span>${historyDate(r.created_at)}</span></div>
+        </div>
+        <span class="history-result">${r.result}</span>
+      </div>
+    </div>`).join("");
+  }
+
   function renderPreview(){
     document.getElementById("previewSport").textContent = currentPlay.sport || "SPORT • TODAY";
     document.getElementById("previewMatchup").textContent = currentPlay.matchup || "Matchup Hidden";
@@ -117,6 +150,7 @@
     };
     editMode = false;
     render();
+    loadHistory();
   }
 
   document.getElementById("editPlay").addEventListener("click", () => {
@@ -212,6 +246,7 @@
     state.is_live=false; state.is_locked=true; state.is_settled=true;
     gradeMsg.textContent=`${result} recorded. Tracker updated.`;
     render();
+    loadHistory();
   }));
 
   checkSession();
