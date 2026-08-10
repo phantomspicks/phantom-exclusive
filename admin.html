@@ -56,18 +56,26 @@
       <div class="field"><label>STATUS</label><select id="isLive"><option value="true">LIVE</option><option value="false">HIDDEN / NO PLAY</option></select></div>
       <div class="admin-actions">
         <button class="btn btn-primary" id="savePlay">SUBMIT PLAY</button>
+        <button class="btn btn-dark" id="editPlay">EDIT PLAY</button>
+      </div>
+      <div class="admin-actions" style="margin-top:8px">
         <button class="btn btn-danger" id="lockPlay">LOCK PLAY</button>
+        <button class="btn btn-dark" id="refreshPreview">REFRESH PREVIEW</button>
       </div>
       <div class="status-msg" id="saveMsg"></div>
     </section>
 
     <section class="panel">
       <h2>CUSTOMER PREVIEW</h2>
-      <p class="admin-note">This is the locked view customers see before purchase. It updates when you submit the play.</p>
+      <p class="admin-note">Switch between the locked paywall view and the unlocked customer view.</p>
+      <div class="preview-toggle">
+        <button class="btn btn-dark" id="showLocked">LOCKED VIEW</button>
+        <button class="btn btn-dark" id="showUnlocked">UNLOCKED VIEW</button>
+      </div>
       <div class="preview-frame">
         <div class="preview-top"><span>PHANTOM PICKS</span><span>EXCLUSIVE PLAY</span></div>
-        <div class="preview-card">
-          <div class="card-top"><span>PHANTOM'S EXCLUSIVE</span><span>LOCKED</span></div>
+        <div class="preview-card" id="previewCard">
+          <div class="card-top"><span>PHANTOM'S EXCLUSIVE</span><span class="preview-lock-label" id="previewLockLabel">LOCKED</span></div>
           <div class="blurred-content">
             <div class="sport" id="previewSport">SPORT • TODAY</div>
             <div class="matchup" id="previewMatchup">Matchup Hidden</div>

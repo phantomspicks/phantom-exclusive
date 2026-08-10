@@ -14,6 +14,8 @@
   const db = supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
   let state = { is_live:false, is_locked:false, is_settled:false, updated_at:null };
   let currentPlay = { sport:"", matchup:"", pick_text:"", odds:"" };
+  let editMode = false;
+  let previewUnlocked = false;
 
   function showLoggedOut(){ loginView.classList.remove("hidden"); adminView.classList.add("hidden"); }
   function showLoggedIn(){ loginView.classList.add("hidden"); adminView.classList.remove("hidden"); loadCurrent(); }
@@ -55,6 +57,12 @@
     document.getElementById("previewMatchup").textContent = currentPlay.matchup || "Matchup Hidden";
     document.getElementById("previewPick").textContent = currentPlay.pick_text || "Exclusive Pick Hidden";
     document.getElementById("previewOdds").textContent = currentPlay.odds || "Odds Hidden";
+
+    const card = document.getElementById("previewCard");
+    card.classList.toggle("unlocked", previewUnlocked);
+    document.getElementById("previewLockLabel").textContent = previewUnlocked ? "UNLOCKED" : "LOCKED";
+    document.getElementById("showLocked").classList.toggle("btn-primary", !previewUnlocked);
+    document.getElementById("showUnlocked").classList.toggle("btn-primary", previewUnlocked);
   }
 
   function render(){
@@ -70,10 +78,16 @@
     document.getElementById("lockPill").classList.toggle("on", state.is_locked);
     document.getElementById("settledPill").classList.toggle("on", state.is_settled);
 
-    ["sport","matchup","pickText","odds","isLive","savePlay"].forEach(id => document.getElementById(id).disabled = state.is_locked);
+    const freeze = state.is_locked && !editMode;
+    ["sport","matchup","pickText","odds","isLive"].forEach(id => document.getElementById(id).disabled = freeze);
+
+    document.getElementById("savePlay").disabled = freeze;
+    document.getElementById("editPlay").disabled = !submitted;
+    document.getElementById("editPlay").textContent = editMode ? "CANCEL EDIT" : "EDIT PLAY";
     document.getElementById("lockPlay").textContent = state.is_locked ? "UNLOCK PLAY" : "LOCK PLAY";
     document.getElementById("settledCheck").checked = state.is_settled;
     document.querySelectorAll(".grade").forEach(b => b.disabled = !state.is_settled);
+
     renderPreview();
   }
 
@@ -101,8 +115,24 @@
       is_settled:!!data.is_settled,
       updated_at:data.updated_at || null
     };
+    editMode = false;
     render();
   }
+
+  document.getElementById("editPlay").addEventListener("click", () => {
+    editMode = !editMode;
+    if (!editMode) {
+      document.getElementById("sport").value=currentPlay.sport;
+      document.getElementById("matchup").value=currentPlay.matchup;
+      document.getElementById("pickText").value=currentPlay.pick_text;
+      document.getElementById("odds").value=currentPlay.odds;
+      document.getElementById("isLive").value=String(state.is_live);
+      saveMsg.textContent = "Edit cancelled.";
+    } else {
+      saveMsg.textContent = "Edit mode enabled. Make changes, then press SUBMIT PLAY.";
+    }
+    render();
+  });
 
   document.getElementById("savePlay").addEventListener("click", async () => {
     saveMsg.textContent = "Submitting...";
@@ -124,7 +154,8 @@
     state.is_live = payload.is_live;
     state.is_settled = false;
     state.updated_at = now;
-    saveMsg.textContent = payload.is_live ? "Submitted. Customer page is now showing this locked play." : "Saved, but not live to customers.";
+    editMode = false;
+    saveMsg.textContent = payload.is_live ? "Submitted. Customer page is now showing this play." : "Saved, but not live to customers.";
     render();
   });
 
@@ -132,8 +163,25 @@
     const next=!state.is_locked;
     const { error }=await db.from("exclusive_current").update({is_locked:next,updated_at:new Date().toISOString()}).eq("id",1);
     if(!error) state.is_locked=next;
-    saveMsg.textContent=error?error.message:(next?"Play locked. Fields are frozen.":"Play unlocked for editing.");
+    editMode = false;
+    saveMsg.textContent=error?error.message:(next?"Play locked.":"Play unlocked for editing.");
     render();
+  });
+
+  document.getElementById("refreshPreview").addEventListener("click", async () => {
+    saveMsg.textContent = "Refreshing preview...";
+    await loadCurrent();
+    saveMsg.textContent = "Preview refreshed.";
+  });
+
+  document.getElementById("showLocked").addEventListener("click", () => {
+    previewUnlocked = false;
+    renderPreview();
+  });
+
+  document.getElementById("showUnlocked").addEventListener("click", () => {
+    previewUnlocked = true;
+    renderPreview();
   });
 
   document.getElementById("settledCheck").addEventListener("change", async e => {

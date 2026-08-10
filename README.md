@@ -1,11 +1,11 @@
-# Phantom Picks Exclusive — V5
+# Phantom Picks Exclusive — V6
 
-New Command Center additions:
-- Clear submission status banner: NO PLAY SUBMITTED / PLAY SUBMITTED • LIVE / PLAY SAVED • NOT LIVE.
-- Shows the last submission time.
-- Customer Preview panel inside the Command Center.
-- Preview mirrors the locked $20 customer-facing card after submission.
-- Existing login, lock/unlock, settlement gate, and grading remain.
+Changes:
+- Added EDIT PLAY button so a submitted play can be reopened and changed.
+- Editing works even if the play was previously locked.
+- Added LOCKED VIEW / UNLOCKED VIEW toggle in Customer Preview.
+- Unlocked preview shows the actual submitted play exactly without blur.
+- Added REFRESH PREVIEW button.
+- Existing login, lock/unlock, settlement gating, and grading remain.
 
-Update:
-Replace the V4 files in your GitHub repo with these V5 files. No new Supabase migration is required if V4 schema was already run.
+No new Supabase SQL migration is required if V4/V5 schema already exists.
