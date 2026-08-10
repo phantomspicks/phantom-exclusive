@@ -16,16 +16,8 @@
         <h1>COMMAND CENTER</h1>
         <p>PHANTOM PICKS • OWNER ACCESS</p>
       </div>
-
-      <div class="field">
-        <label>EMAIL</label>
-        <input id="loginEmail" type="email" autocomplete="username" placeholder="Owner email">
-      </div>
-      <div class="field">
-        <label>PASSWORD</label>
-        <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password">
-      </div>
-
+      <div class="field"><label>EMAIL</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Owner email"></div>
+      <div class="field"><label>PASSWORD</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password"></div>
       <button class="btn btn-primary" id="loginBtn">SIGN IN</button>
       <div class="login-error" id="loginMsg"></div>
     </div>
@@ -33,15 +25,22 @@
 
   <main class="admin-wrap hidden" id="adminView">
     <header class="admin-head">
-      <div>
-        <div class="admin-title">COMMAND CENTER</div>
-        <div class="admin-sub">PHANTOM PICKS • EXCLUSIVE PLAY</div>
-      </div>
+      <div><div class="admin-title">COMMAND CENTER</div><div class="admin-sub">PHANTOM PICKS • EXCLUSIVE PLAY</div></div>
       <button class="btn btn-dark logout" id="logoutBtn">LOG OUT</button>
     </header>
 
-    <div class="state-card">
+    <div class="submission-banner">
+      <div class="submission-left">
+        <span class="submission-dot" id="submissionDot"></span>
+        <div>
+          <div class="submission-title" id="submissionTitle">NO PLAY SUBMITTED</div>
+          <div class="submission-time" id="submissionTime">Save a play to publish it.</div>
+        </div>
+      </div>
       <span class="pill" id="livePill">NOT LIVE</span>
+    </div>
+
+    <div class="state-card">
       <span class="pill" id="lockPill">UNLOCKED</span>
       <span class="pill" id="settledPill">NOT SETTLED</span>
     </div>
@@ -54,27 +53,38 @@
       </div>
       <div class="field"><label>PICK</label><input id="pickText" placeholder="Player Over 24.5 Points"></div>
       <div class="field"><label>ODDS / BOOK</label><input id="odds" placeholder="-115 • DraftKings"></div>
-      <div class="field">
-        <label>STATUS</label>
-        <select id="isLive">
-          <option value="true">LIVE</option>
-          <option value="false">HIDDEN / NO PLAY</option>
-        </select>
-      </div>
+      <div class="field"><label>STATUS</label><select id="isLive"><option value="true">LIVE</option><option value="false">HIDDEN / NO PLAY</option></select></div>
       <div class="admin-actions">
-        <button class="btn btn-primary" id="savePlay">SAVE PLAY</button>
+        <button class="btn btn-primary" id="savePlay">SUBMIT PLAY</button>
         <button class="btn btn-danger" id="lockPlay">LOCK PLAY</button>
       </div>
       <div class="status-msg" id="saveMsg"></div>
     </section>
 
     <section class="panel">
+      <h2>CUSTOMER PREVIEW</h2>
+      <p class="admin-note">This is the locked view customers see before purchase. It updates when you submit the play.</p>
+      <div class="preview-frame">
+        <div class="preview-top"><span>PHANTOM PICKS</span><span>EXCLUSIVE PLAY</span></div>
+        <div class="preview-card">
+          <div class="card-top"><span>PHANTOM'S EXCLUSIVE</span><span>LOCKED</span></div>
+          <div class="blurred-content">
+            <div class="sport" id="previewSport">SPORT • TODAY</div>
+            <div class="matchup" id="previewMatchup">Matchup Hidden</div>
+            <div class="pick" id="previewPick">Exclusive Pick Hidden</div>
+            <div class="details" id="previewOdds">Odds Hidden</div>
+          </div>
+          <div class="lock-overlay"><div class="lock-icon">🔒</div><strong>PLAY LOCKED</strong><span>Unlock to reveal the full pick.</span></div>
+        </div>
+        <div class="preview-unlock"><span>UNLOCK EXCLUSIVE PLAY</span><b>$20</b></div>
+        <div class="preview-note">ONE-TIME PURCHASE • NO REFUNDS • LOSS/PUSH ROLLS ACCESS TO THE NEXT EXCLUSIVE PLAY</div>
+      </div>
+    </section>
+
+    <section class="panel">
       <h2>SETTLEMENT</h2>
       <p class="admin-note">WIN / LOSS / PUSH stay disabled until you mark the bet settled.</p>
-      <label class="settled-check">
-        <input type="checkbox" id="settledCheck">
-        <span>THIS BET HAS SETTLED</span>
-      </label>
+      <label class="settled-check"><input type="checkbox" id="settledCheck"><span>THIS BET HAS SETTLED</span></label>
       <div class="record-actions" style="margin-top:12px">
         <button class="btn btn-dark grade" data-result="WIN" disabled>WIN</button>
         <button class="btn btn-dark grade" data-result="LOSS" disabled>LOSS</button>

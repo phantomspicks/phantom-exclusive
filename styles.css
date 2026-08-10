@@ -17,3 +17,21 @@ body{margin:0;background:radial-gradient(circle at 50% 0,#202020 0,#0b0b0b 34%,#
 .login-error{font-size:11px;color:#aaa;min-height:18px;margin-top:10px}
 .logout{width:auto;padding:10px 13px;font-size:9px}
 .hidden{display:none!important}
+
+.submission-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #2b2b2b;border-radius:14px;padding:13px 14px;background:#0a0a0a;margin-bottom:14px}
+.submission-left{display:flex;align-items:center;gap:10px}
+.submission-dot{width:9px;height:9px;border-radius:50%;background:#555}
+.submission-dot.sent{background:#f2f2f2;box-shadow:0 0 12px rgba(255,255,255,.75)}
+.submission-title{font-size:9px;font-weight:900;letter-spacing:.15em}
+.submission-time{font-size:8px;color:#666;margin-top:3px}
+.preview-frame{border:1px solid #2b2b2b;border-radius:18px;padding:12px;background:#070707}
+.preview-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.preview-top span{font-size:8px;letter-spacing:.16em;color:#777;font-weight:900}
+.preview-card{position:relative;min-height:260px;overflow:hidden;border-radius:15px;border:1px solid #2b2b2b;background:linear-gradient(135deg,#161616,#090909)}
+.preview-card .card-top{display:flex;justify-content:space-between;padding:16px;color:#777;font-size:8px;font-weight:900;letter-spacing:.18em}
+.preview-card .blurred-content{padding:38px 20px;text-align:center;filter:blur(11px);opacity:.62;user-select:none}
+.preview-card .matchup{font-size:24px}
+.preview-card .pick{font-size:17px}
+.preview-card .lock-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(0,0,0,.18),rgba(0,0,0,.58));text-align:center}
+.preview-unlock{margin-top:10px;min-height:50px;padding:0 16px;border-radius:11px;background:#f4f4f4;color:#080808;display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:950;letter-spacing:.08em}
+.preview-note{font-size:8px;color:#666;line-height:1.45;margin-top:10px}
