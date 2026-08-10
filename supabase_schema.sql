@@ -1,4 +1,6 @@
--- V3 schema / migration
+-- Phantom Exclusive V4
+-- Run in Supabase SQL Editor.
+
 create table if not exists public.exclusive_current (
   id integer primary key,
   sport text,
@@ -31,5 +33,31 @@ create table if not exists public.exclusive_results (
 alter table public.exclusive_current enable row level security;
 alter table public.exclusive_results enable row level security;
 
--- If these policies already exist from V2, leave them as-is.
--- Public prototype read/write rules should be replaced with authenticated admin policies before launch.
+-- Remove old prototype write policies if they exist.
+drop policy if exists "exclusive current temporary write" on public.exclusive_current;
+drop policy if exists "exclusive results temporary insert" on public.exclusive_results;
+
+-- Keep public read access for customer-facing record/status.
+drop policy if exists "exclusive current public read" on public.exclusive_current;
+create policy "exclusive current public read"
+on public.exclusive_current for select
+using (true);
+
+drop policy if exists "exclusive results public read" on public.exclusive_results;
+create policy "exclusive results public read"
+on public.exclusive_results for select
+using (true);
+
+-- Only signed-in Supabase users can modify the Command Center data.
+drop policy if exists "exclusive current authenticated write" on public.exclusive_current;
+create policy "exclusive current authenticated write"
+on public.exclusive_current for all
+to authenticated
+using (true)
+with check (true);
+
+drop policy if exists "exclusive results authenticated insert" on public.exclusive_results;
+create policy "exclusive results authenticated insert"
+on public.exclusive_results for insert
+to authenticated
+with check (true);

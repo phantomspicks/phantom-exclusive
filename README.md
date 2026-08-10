@@ -1,15 +1,21 @@
-# Phantom Picks Exclusive — V3
+# Phantom Picks Exclusive — V4 Login-Protected Command Center
 
-New Command Center behavior:
-- LOCK PLAY button freezes the posted play so it cannot be accidentally edited.
-- UNLOCK PLAY lets you edit it again.
-- WIN / LOSS / PUSH buttons stay disabled until "THIS BET HAS SETTLED" is checked.
-- Grading updates the mini public tracker automatically.
+This version adds real email/password login through Supabase Auth.
 
-Update steps:
-1. Run supabase_schema.sql in Supabase SQL Editor. This adds is_locked + is_settled.
-2. Keep your real Supabase URL + publishable/anon key in config.js.
-3. Replace the Site 3 repo files with this package.
-4. Vercel should redeploy automatically.
+## What changed
+- /admin.html opens to a login screen.
+- The Command Center is hidden until authentication succeeds.
+- Admin database writes are restricted to authenticated Supabase users.
+- Lock/unlock and settlement-before-grading behavior remains.
 
-Admin page: /admin.html
+## Setup
+1. Run `supabase_schema.sql` in Supabase SQL Editor.
+2. In Supabase, go to Authentication > Users.
+3. Create your owner/admin user with the email and password you want to use.
+4. In `config.js`, paste the Project URL and publishable/anon key.
+5. Do NOT put a service_role/secret key in `config.js`.
+6. Upload/replace these files in the `phantom-exclusive` GitHub repository.
+7. Let Vercel redeploy.
+8. Open `/admin.html` and sign in using the user you created in Supabase.
+
+For a one-owner setup, keep only your owner account in Supabase Authentication.
