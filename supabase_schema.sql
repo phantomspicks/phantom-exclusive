@@ -1,3 +1,4 @@
+-- V3 schema / migration
 create table if not exists public.exclusive_current (
   id integer primary key,
   sport text,
@@ -5,11 +6,16 @@ create table if not exists public.exclusive_current (
   pick_text text,
   odds text,
   is_live boolean default false,
+  is_locked boolean default false,
+  is_settled boolean default false,
   updated_at timestamptz default now()
 );
 
-insert into public.exclusive_current (id, sport, matchup, pick_text, odds, is_live)
-values (1, '', '', '', '', false)
+alter table public.exclusive_current add column if not exists is_locked boolean default false;
+alter table public.exclusive_current add column if not exists is_settled boolean default false;
+
+insert into public.exclusive_current (id, sport, matchup, pick_text, odds, is_live, is_locked, is_settled)
+values (1, '', '', '', '', false, false, false)
 on conflict (id) do nothing;
 
 create table if not exists public.exclusive_results (
@@ -25,19 +31,5 @@ create table if not exists public.exclusive_results (
 alter table public.exclusive_current enable row level security;
 alter table public.exclusive_results enable row level security;
 
-create policy "exclusive current public read"
-on public.exclusive_current for select
-using (true);
-
-create policy "exclusive results public read"
-on public.exclusive_results for select
-using (true);
-
-create policy "exclusive current temporary write"
-on public.exclusive_current for all
-using (true)
-with check (true);
-
-create policy "exclusive results temporary insert"
-on public.exclusive_results for insert
-with check (true);
+-- If these policies already exist from V2, leave them as-is.
+-- Public prototype read/write rules should be replaced with authenticated admin policies before launch.

@@ -1,49 +1,19 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Phantom Picks — Exclusive Command Center</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-  <main class="admin-wrap">
-    <header class="admin-head">
-      <div>
-        <div class="admin-title">COMMAND CENTER</div>
-        <div class="admin-sub">PHANTOM PICKS • EXCLUSIVE PLAY</div>
-      </div>
-    </header>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phantom Picks — Exclusive Command Center</title><link rel="stylesheet" href="styles.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
+<body><main class="admin-wrap">
+<header class="admin-head"><div><div class="admin-title">COMMAND CENTER</div><div class="admin-sub">PHANTOM PICKS • EXCLUSIVE PLAY</div></div></header>
+<div class="state-card"><span class="pill" id="livePill">NOT LIVE</span><span class="pill" id="lockPill">UNLOCKED</span><span class="pill" id="settledPill">NOT SETTLED</span></div>
+<section class="panel"><h2>POST / UPDATE EXCLUSIVE PLAY</h2>
+<div class="grid2"><div class="field"><label>SPORT</label><input id="sport" placeholder="NBA • TONIGHT"></div><div class="field"><label>MATCHUP</label><input id="matchup" placeholder="Lakers vs Warriors"></div></div>
+<div class="field"><label>PICK</label><input id="pickText" placeholder="Player Over 24.5 Points"></div>
+<div class="field"><label>ODDS / BOOK</label><input id="odds" placeholder="-115 • DraftKings"></div>
+<div class="field"><label>STATUS</label><select id="isLive"><option value="true">LIVE</option><option value="false">HIDDEN / NO PLAY</option></select></div>
+<div class="admin-actions"><button class="btn btn-primary" id="savePlay">SAVE PLAY</button><button class="btn btn-danger" id="lockPlay">LOCK PLAY</button></div>
+<div class="status-msg" id="saveMsg"></div></section>
 
-    <section class="panel">
-      <h2>POST / UPDATE EXCLUSIVE PLAY</h2>
-      <div class="grid2">
-        <div class="field"><label>SPORT</label><input id="sport" placeholder="NBA • TONIGHT"></div>
-        <div class="field"><label>MATCHUP</label><input id="matchup" placeholder="Lakers vs Warriors"></div>
-      </div>
-      <div class="field"><label>PICK</label><input id="pickText" placeholder="Player Over 24.5 Points"></div>
-      <div class="field"><label>ODDS / BOOK</label><input id="odds" placeholder="-115 • DraftKings"></div>
-      <div class="field"><label>STATUS</label>
-        <select id="isLive"><option value="true">LIVE</option><option value="false">HIDDEN / NO PLAY</option></select>
-      </div>
-      <button class="btn btn-primary" id="savePlay">SAVE EXCLUSIVE PLAY</button>
-      <div class="status-msg" id="saveMsg"></div>
-    </section>
-
-    <section class="panel">
-      <h2>GRADE CURRENT PLAY</h2>
-      <p class="admin-note">Grading adds the result to the public Exclusive Play tracker. LOSS and PUSH keep rollover access alive; WIN ends the customer's current Exclusive Play access.</p>
-      <div class="record-actions">
-        <button class="btn btn-dark grade" data-result="WIN">WIN</button>
-        <button class="btn btn-dark grade" data-result="LOSS">LOSS</button>
-        <button class="btn btn-dark grade" data-result="PUSH">PUSH</button>
-      </div>
-      <div class="status-msg" id="gradeMsg"></div>
-    </section>
-  </main>
-
-  <script src="config.js"></script>
-  <script src="admin.js"></script>
-</body>
-</html>
+<section class="panel"><h2>SETTLEMENT</h2>
+<p class="admin-note">Grading stays disabled until you mark the play settled. Once settled, choose WIN, LOSS, or PUSH.</p>
+<label class="settled-check"><input type="checkbox" id="settledCheck"><span>THIS BET HAS SETTLED</span></label>
+<div class="record-actions" style="margin-top:12px">
+<button class="btn btn-dark grade" data-result="WIN" disabled>WIN</button><button class="btn btn-dark grade" data-result="LOSS" disabled>LOSS</button><button class="btn btn-dark grade" data-result="PUSH" disabled>PUSH</button></div>
+<div class="status-msg" id="gradeMsg"></div></section>
+</main><script src="config.js"></script><script src="admin.js"></script></body></html>

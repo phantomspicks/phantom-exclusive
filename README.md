@@ -1,19 +1,15 @@
-# Phantom Picks Exclusive — V2
+# Phantom Picks Exclusive — V3
 
-Changes:
-- "THE PLAY THEY DON'T SEE" changed to "EXCLUSIVE PLAY"
-- Added mini public Exclusive Play tracker
-- Added /admin.html Command Center
-- Added Supabase-backed posting and grading
+New Command Center behavior:
+- LOCK PLAY button freezes the posted play so it cannot be accidentally edited.
+- UNLOCK PLAY lets you edit it again.
+- WIN / LOSS / PUSH buttons stay disabled until "THIS BET HAS SETTLED" is checked.
+- Grading updates the mini public tracker automatically.
 
-Setup:
-1. Run supabase_schema.sql in Supabase SQL Editor.
-2. Put your Supabase Project URL + anon/publishable key into config.js.
-3. Upload/replace all files in the phantom-exclusive GitHub repo.
-4. Vercel redeploys automatically.
-5. Customer page: /
-6. Command Center: /admin.html
+Update steps:
+1. Run supabase_schema.sql in Supabase SQL Editor. This adds is_locked + is_settled.
+2. Keep your real Supabase URL + publishable/anon key in config.js.
+3. Replace the Site 3 repo files with this package.
+4. Vercel should redeploy automatically.
 
-Important:
-The current write policies are temporary for the prototype. Before public launch, admin writes should be protected with authentication.
-Whop payment/access verification still needs to be connected before the blurred pick can safely reveal only to paying customers.
+Admin page: /admin.html
