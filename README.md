@@ -1,17 +1,19 @@
-# Phantom Picks — Site 3: Exclusive Play
+# Phantom Picks Exclusive — V2
 
-This is the first customer-facing prototype for the standalone Exclusive Play site.
+Changes:
+- "THE PLAY THEY DON'T SEE" changed to "EXCLUSIVE PLAY"
+- Added mini public Exclusive Play tracker
+- Added /admin.html Command Center
+- Added Supabase-backed posting and grading
 
-Included:
-- Mobile-first Phantom Picks presentation
-- Blurred/locked pick card
-- $20 one-time unlock CTA
-- Whop product link
-- WIN / LOSS / PUSH rollover explanation
-- No-refund messaging
+Setup:
+1. Run supabase_schema.sql in Supabase SQL Editor.
+2. Put your Supabase Project URL + anon/publishable key into config.js.
+3. Upload/replace all files in the phantom-exclusive GitHub repo.
+4. Vercel redeploys automatically.
+5. Customer page: /
+6. Command Center: /admin.html
 
-Whop product:
-https://whop.com/phantom-picks-b643/exclusive-play-92/
-
-IMPORTANT:
-The current prototype does NOT pretend to verify payment. The unlock button sends the customer to the Whop product. The next implementation step is connecting authenticated Whop purchase/access verification so the blur is removed only for customers who actually have active Exclusive Play access.
+Important:
+The current write policies are temporary for the prototype. Before public launch, admin writes should be protected with authentication.
+Whop payment/access verification still needs to be connected before the blurred pick can safely reveal only to paying customers.
