@@ -1,6 +1,6 @@
 const KEY='phantomExclusiveDrops_v3';
 const UNIT_VALUE=2000;
-const WHOP_CHECKOUT_URL=''; // Paste the Whop checkout URL here when ready.
+const WHOP_CHECKOUT_URL='https://whop.com/phantom-picks-b643?a=phantomspicks';
 const seed=[
   {id:2,date:'2026-08-12',play:'Rockies vs Diamondbacks',detail:'Over 9.5 Runs',odds:-116,units:5,result:'WIN',profit:8620.69},
   {id:3,date:'2026-08-11',play:'Cubs vs Nationals',detail:'Over 9.5 Runs',odds:-117,units:5,result:'WIN',profit:8547.01},
