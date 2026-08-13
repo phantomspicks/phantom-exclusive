@@ -44,3 +44,16 @@ Do not delete the Aug 11 Cubs vs Nationals entry.
 - Public and admin performance sections show cumulative Net Profit and ROI.
 
 Run the updated `supabase_schema.sql` once before deploying so the `units` column exists.
+
+
+## Approved Visual Rebuild
+This package keeps the working Site 3 backend/features but rebuilds the public and admin front end to match the approved flashy black/red Exclusive concept much more closely:
+- neon red energy / gold accents
+- hooded Phantom hero treatment
+- large heavily blurred locked-pick presentation
+- premium red/gold admin Command Center
+- multi-play posting
+- 5U default, 1U=$2,000
+- profit + ROI
+- per-play settlement
+- settled-play delete controls
