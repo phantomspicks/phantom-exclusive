@@ -4,7 +4,15 @@ const FALLBACK_HISTORY=[
  {id:3,date:'2026-08-11',play:'Cubs vs Nationals',detail:'Over 9.5 Runs',odds:-117,units:5,result:'WIN',profit:8547.01},
  {id:4,date:'2026-08-10',play:'Braves vs Mets',detail:'Over 8.5 Runs',odds:-108,units:5,result:'WIN',profit:9259.26}
 ];
-let currentState=null;
+let currentState={
+  active:false,
+  unlocked:false,
+  activeDrop:null,
+  history:FALLBACK_HISTORY,
+  record:{w:3,l:0,p:0},
+  profit:FALLBACK_HISTORY.reduce((a,x)=>a+(Number(x.profit)||0),0),
+  risk:FALLBACK_HISTORY.reduce((a,x)=>a+(Number(x.units)||5)*UNIT_VALUE,0)
+};
 let currentFilter='ALL';
 function money(n){if(n==null)return '—';const v=Number(n);return `${v>0?'+':v<0?'-':''}$${Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`}
 function oddsText(o){if(o==null||o==='')return '—';const n=Number(o);return n>0?`+${n}`:`${n}`}
@@ -24,4 +32,9 @@ async function beginCheckout(){try{unlockBtn.disabled=true;unlockBtn.classList.a
 async function verifyReturn(){unlockBtn.disabled=true;unlockBtn.classList.add('verifying');unlockBtn.textContent='VERIFYING WHOP PAYMENT…';setMessage('Payment completed? Verifying it securely with Whop…');for(let i=0;i<12;i++){try{const r=await fetch('/api/verify-access',{cache:'no-store'});const data=await r.json();if(r.ok&&data.verified){history.replaceState({},'',location.pathname);render(data,currentFilter);return}if(r.status!==202&&r.status!==401&&r.status>=400)throw new Error(data.error||'Verification failed');}catch(e){if(i===11)setMessage(e.message)}await new Promise(r=>setTimeout(r,1500));}unlockBtn.classList.remove('verifying');setMessage('Whop has not confirmed the payment yet. Refresh this page in a moment; you will not be charged again.')}
 tabs.addEventListener('click',e=>{if(!e.target.dataset.filter)return;tabs.querySelectorAll('button').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');render(currentState,e.target.dataset.filter)});
 unlockBtn.onclick=beginCheckout;viewAll.onclick=()=>{tabs.querySelector('[data-filter="ALL"]').click();historyRows.scrollIntoView({behavior:'smooth',block:'center'})};showGuide.onclick=()=>guideDialog.showModal();closeGuide.onclick=()=>guideDialog.close();
-(async()=>{try{await loadState();const q=new URLSearchParams(location.search);if(q.get('checkout')==='return'||q.get('status')==='success')await verifyReturn()}catch(e){setMessage(e.message)}})();
+// Draw the settled history immediately, even before the API/storage credentials are configured.
+render(currentState,currentFilter);
+(async()=>{try{await loadState();const q=new URLSearchParams(location.search);if(q.get('checkout')==='return'||q.get('status')==='success')await verifyReturn()}catch(e){
+  // Keep the built-in settled history visible if the API is unavailable during setup.
+  setMessage(e.message);
+}})();
