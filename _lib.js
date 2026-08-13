@@ -31,7 +31,7 @@ async function saveDrops(drops){
   if(!redisReady()) throw new Error('Redis is not configured');
   await redis(['SET',DATA_KEY,JSON.stringify(drops)]);
 }
-function hmacSecret(){ return process.env.SESSION_SECRET || process.env.ADMIN_SECRET || ''; }
+function hmacSecret(){ return process.env.SESSION_SECRET || ''; }
 function b64url(input){ return Buffer.from(input).toString('base64url'); }
 function signPayload(payload){
   const secret=hmacSecret(); if(!secret) throw new Error('SESSION_SECRET is not configured');
@@ -128,5 +128,4 @@ function sanitizeState(drops,access){
   };
 }
 function json(res,status,data){res.statusCode=status;res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');res.end(JSON.stringify(data));}
-function isAdmin(req){const given=String(req.headers['x-admin-secret']||'');const expected=String(process.env.ADMIN_SECRET||'');return !!expected&&given.length===expected.length&&crypto.timingSafeEqual(Buffer.from(given),Buffer.from(expected));}
-module.exports={UNIT_VALUE,seed,getDrops,saveDrops,signPayload,verifyPayload,parseCookies,cookie,clearCookie,whopCreateCheckout,whopVerifyCheckout,accessStillValid,sanitizeState,json,isAdmin,redisReady};
+module.exports={UNIT_VALUE,seed,getDrops,saveDrops,signPayload,verifyPayload,parseCookies,cookie,clearCookie,whopCreateCheckout,whopVerifyCheckout,accessStillValid,sanitizeState,json,redisReady};

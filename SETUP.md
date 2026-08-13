@@ -17,7 +17,6 @@ In Project → Settings → Environment Variables, add:
 - `WHOP_PRODUCT_ID` — your Exclusive Play `prod_...` ID (recommended so checkout stays tied to that product).
 - `WHOP_AFFILIATE_CODE=phantomspicks`
 - `SESSION_SECRET` — a long random string (40+ characters).
-- `ADMIN_SECRET` — the password you want the Command Center to ask for.
 - `PUBLIC_SITE_URL=https://phantom-exclusive.vercel.app` (replace with your actual production URL if different).
 
 Then redeploy.
@@ -26,7 +25,7 @@ Then redeploy.
 Your Whop API key needs permission to create checkout configurations and read payments. Whop currently documents checkout creation permissions including `checkout_configuration:create`; payment verification requires the Payments API read permissions.
 
 ## 4. First Command Center visit
-Open `/admin.html` after deployment. Enter `ADMIN_SECRET`. If your old active play is still stored in that browser, the page will offer to migrate it into the new shared server storage. Accept that prompt once.
+Open `/admin.html` after deployment. If your old active play is still stored in that browser, the page will offer to migrate it into the new shared server storage. Accept that prompt once.
 
 ## 5. Real flow
 1. Viewer sees **ACTIVE PLAY LIVE** but not the hidden pick.
@@ -38,4 +37,4 @@ Open `/admin.html` after deployment. Enter `ADMIN_SECRET`. If your old active pl
 7. The signed access cookie remains valid through losses/pushes and automatically expires for future plays as soon as a WIN is settled after that purchase.
 
 ## Security note
-Do **not** place `WHOP_API_KEY`, Redis tokens, `SESSION_SECRET`, or `ADMIN_SECRET` in `app.js`, `index.html`, or any client-side file. This build reads them only inside Vercel server functions.
+Do **not** place `WHOP_API_KEY`, Redis tokens, `SESSION_SECRET` in `app.js`, `index.html`, or any client-side file. This build reads them only inside Vercel server functions.

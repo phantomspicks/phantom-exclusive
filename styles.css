@@ -57,3 +57,14 @@
 .hero-panel{min-height:820px}
 @media(max-width:900px){.hero-panel{min-height:820px}}
 @media(max-width:600px){.hero-panel{min-height:800px}.hero-copy{padding-top:38px}.locked-card{bottom:12px}}
+\n\n/* FINAL LAYOUT FIX — 2026-08-13: no overlap, performance directly above history */
+.public-grid{align-items:start}
+.right-stack{display:flex!important;flex-direction:column!important;gap:18px!important}
+.right-stack>.performance{order:1!important}
+.right-stack>.history-panel{order:2!important}
+.right-stack>.calc-info{order:3!important}
+.hero-panel{min-height:0!important;overflow:hidden!important;padding-bottom:1px!important}
+.hero-copy{position:relative!important;z-index:3!important;padding:54px 34px 0!important}
+.locked-card{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;margin:120px 34px 28px!important;z-index:4!important}
+@media(max-width:900px){.hero-panel{min-height:0!important}.locked-card{margin-top:110px!important}}
+@media(max-width:600px){.hero-panel{min-height:0!important}.hero-copy{padding:38px 20px 0!important;width:88%!important}.locked-card{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;margin:115px 12px 12px!important}}
