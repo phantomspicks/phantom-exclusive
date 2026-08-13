@@ -57,3 +57,7 @@ This package keeps the working Site 3 backend/features but rebuilds the public a
 - profit + ROI
 - per-play settlement
 - settled-play delete controls
+
+
+## Character Fix
+Replaced the temporary CSS-built hooded figure with the real Phantom artwork asset (`phantom-character.png`).
