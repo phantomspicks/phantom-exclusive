@@ -89,12 +89,33 @@ linear-gradient(180deg,#060303,#020202 62%)}
   .form-top,.grid4{grid-template-columns:1fr}.admin-tabs{grid-template-columns:1fr 1fr}.admin-title{font-size:17px}
 }
 
-/* REAL PHANTOM CHARACTER — replaces the temporary CSS-built figure */
-.phantom-visual.real-character{position:relative;min-height:360px;overflow:visible}
-.phantom-character{position:absolute;right:-2%;bottom:-18px;width:min(360px,115%);height:auto;max-height:390px;object-fit:contain;object-position:center bottom;z-index:2;filter:drop-shadow(0 0 24px rgba(255,28,38,.18))}
-.character-energy{position:absolute;right:2%;bottom:4%;width:310px;height:310px;border-radius:50%;background:radial-gradient(circle,rgba(255,30,40,.22),rgba(150,0,8,.08) 45%,transparent 70%);border:3px solid rgba(255,36,46,.58);box-shadow:0 0 42px rgba(255,30,40,.28),inset 0 0 35px rgba(255,30,40,.14);z-index:1}
+/* Approved Phantom hero from the selected top-left design */
+.phantom-visual.approved-phantom{position:relative;min-height:350px;overflow:visible}
+.approved-phantom-img{
+  position:absolute;
+  right:-3%;
+  bottom:-12px;
+  width:min(430px,128%);
+  height:auto;
+  max-height:390px;
+  object-fit:contain;
+  z-index:2;
+  mix-blend-mode:screen;
+  filter:drop-shadow(0 0 28px rgba(255,25,35,.24));
+  border-radius:28px;
+  -webkit-mask-image:linear-gradient(to bottom,black 0%,black 74%,transparent 100%);
+  mask-image:linear-gradient(to bottom,black 0%,black 74%,transparent 100%);
+}
+.character-energy{
+  position:absolute;right:-2%;bottom:2%;
+  width:330px;height:330px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,28,38,.20),rgba(120,0,8,.08) 48%,transparent 72%);
+  border:3px solid rgba(255,32,42,.52);
+  box-shadow:0 0 46px rgba(255,28,38,.28),inset 0 0 36px rgba(255,28,38,.15);
+  z-index:1
+}
 @media(max-width:720px){
- .phantom-visual.real-character{min-height:390px}
- .phantom-character{left:50%;right:auto;transform:translateX(-50%);width:min(390px,112vw);max-height:420px;bottom:-12px}
- .character-energy{left:50%;right:auto;transform:translateX(-50%);width:310px;height:310px;bottom:6%}
+  .phantom-visual.approved-phantom{min-height:390px}
+  .approved-phantom-img{left:50%;right:auto;transform:translateX(-50%);width:min(430px,118vw);max-height:420px;bottom:-8px}
+  .character-energy{left:50%;right:auto;transform:translateX(-50%);width:320px;height:320px;bottom:5%}
 }

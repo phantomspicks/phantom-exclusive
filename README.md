@@ -59,5 +59,5 @@ This package keeps the working Site 3 backend/features but rebuilds the public a
 - settled-play delete controls
 
 
-## Character Fix
-Replaced the temporary CSS-built hooded figure with the real Phantom artwork asset (`phantom-character.png`).
+## Exact Phantom Character Fix
+Uses the hooded Phantom from the approved top-left red mockup as `phantom-hero-approved.jpg`.
