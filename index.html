@@ -1,96 +1,13 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#020202">
-<title>Phantom Picks — The Drop</title>
-<link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body class="public-site">
-<main class="site">
-
-<header class="topbar">
-  <div class="brand brand-logo"><img src="phantom-picks-logo.png" alt="Phantom Picks"></div>
-  <a class="goldbtn small" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">🔒 UNLOCK $20</a>
-</header>
-
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-copy">
-    <span class="eyebrow">PHANTOM PICKS EXCLUSIVE</span>
-    <h1><span>THE</span><em>DROP</em></h1>
-    <p>One play. Highest conviction.<br>Backed by data. Driven by results.</p>
-  </div>
-  <img src="phantom-character.jpg" alt="Phantom" class="hero-img">
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phantom Picks — Exclusive Play</title><link rel="stylesheet" href="styles.css"></head><body>
+<header><div class="brand"><div class="mark">P</div><div><b>PHANTOM</b><span>PICKS</span></div></div><div class="live"><i></i> LIVE DROP</div></header>
+<main>
+<section class="hero"><div class="copy"><div class="eyebrow">TODAY'S</div><h1>PHANTOM DROP</h1><p>ONE PLAY. MAX CONFIDENCE.</p>
+<div class="drop-card"><div class="card-title">🔒 &nbsp; EXCLUSIVE PLAY</div><div class="secret"><div class="blur-lines"><span></span><span></span><span></span></div><div class="lock">🔒</div><b>LOCKED</b></div><div class="units">★ &nbsp; 5 UNIT PLAY &nbsp; ★</div><div class="price"><strong>$20</strong> TO UNLOCK</div><button id="unlock">🔒 &nbsp; UNLOCK TODAY'S PLAY</button><small>No refunds. <a href="#terms">See terms.</a></small></div></div>
+<div class="phantom" aria-hidden="true"></div>
+<aside class="how"><h2>HOW IT WORKS</h2><div><em>↻</em><p><b>LOSE?</b><br>Stay unlocked until the next Exclusive Play wins.</p></div><div><em>Ⓟ</em><p><b>PUSH?</b><br>Get tomorrow's Exclusive Play FREE.</p></div><div><em>♛</em><p><b>WIN?</b><br>Access ends. Pay for the next drop.</p></div></aside>
 </section>
-
-<section class="drop-card">
-  <div class="drop-card-head">
-    <div><span class="live-dot"></span> TODAY'S EXCLUSIVE DROP</div>
-    <b id="liveBadge">OFFLINE</b>
-  </div>
-
-  <div id="currentPlays" class="current-plays"></div>
-
-  <div id="emptyState" class="empty-drop hidden">
-    <div class="lockcircle">🔒</div>
-    <strong>LOCKED</strong>
-    <span>No Exclusive Drop is live right now.</span>
-  </div>
-
-  <div class="purchase-row">
-    <div class="price">$20</div>
-    <div class="purchase-copy">
-      <b>ONE-TIME ACCESS</b>
-      <span>No refunds • Loss = keep getting plays<br>Push = next play free</span>
-    </div>
-    <a class="goldbtn" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">🔒 UNLOCK NOW</a>
-  </div>
-</section>
-
-<section class="stats">
-  <article><div class="icon">🏆</div><small>RECORD</small><b><span id="wins">0</span>-<span id="losses">0</span>-<span id="pushes">0</span></b><i>W-L-P</i></article>
-  <article><div class="icon">📈</div><small>WIN RATE</small><b id="winRate">0%</b></article>
-  <article><div class="icon">◉</div><small>NET PROFIT</small><b id="netProfit" class="green">$0</b></article>
-  <article><div class="icon">▥</div><small>ROI</small><b id="roi" class="green">0.0%</b></article>
-  <article><div class="icon">◎</div><small>UNIT SIZE</small><b>5U</b><i>1U = $2,000</i></article>
-</section>
-
-<section class="receipts" id="receipts">
-  <div class="section-head">
-    <div><h2>PREVIOUS <em>DROPS</em></h2><p>Documented. Verified. No exceptions.</p></div>
-  </div>
-  <div id="publicHistory" class="receipt-list"></div>
-  <div class="end-note">No more results to load</div>
-</section>
-
-<section class="how">
-  <h3>HOW IT WORKS</h3>
-  <div class="how-grid">
-    <article><div>🔒</div><b>1. UNLOCK</b><span>Buy access to today’s Exclusive Drop for $20.</span></article>
-    <article><div>◉</div><b>2. VIEW</b><span>See the full play, line, and details.</span></article>
-    <article><div>📈</div><b>3. RESULT</b><span>We grade and post the result when it’s official.</span></article>
-    <article><div>↻</div><b>4. ROLLOVER</b><span>Loss = keep getting plays. Push = next play free.</span></article>
-  </div>
-  <div class="purchase-note">ONE-TIME PURCHASE &nbsp; • &nbsp; NO REFUNDS</div>
-</section>
-
-<section class="access">
-  <div class="pmark">P</div>
-  <div class="access-copy"><b>ACCESS EXCLUSIVE PLAYS UNTIL WE WIN</b><span>If we lose, you keep getting plays.<br>If we push, next play is on us.</span></div>
-  <a class="goldbtn" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">🔒 UNLOCK TODAY · $20</a>
-</section>
-
-<footer class="footer">
-  <div class="brand mini brand-logo"><img src="phantom-picks-logo.png" alt="Phantom Picks"></div>
-  <div>© 2026 Phantom Picks Exclusive. All rights reserved.</div>
-  <div>Not affiliated with any sportsbook.<br>For entertainment purposes only.</div>
-</footer>
-
-</main>
-<script src="config.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
+<section class="performance"><h2>PHANTOM PERFORMANCE</h2><div class="metrics"><div><span>RECORD</span><strong id="record">0-0-0</strong><small id="winrate">WIN RATE: —</small></div><div><span>PROFIT</span><strong id="profit">$0</strong><small>ALL TIME</small></div><div><span>ROI</span><strong id="roi">0%</strong><small>ALL TIME</small></div></div></section>
+<section class="ledger"><div class="section-head"><h2>THE PHANTOM LEDGER</h2><button id="viewAll">VIEW ALL DROPS ›</button></div><div class="table-wrap"><table><thead><tr><th>DATE</th><th>PLAY</th><th>UNITS</th><th>RESULT</th><th>PROFIT</th></tr></thead><tbody id="ledgerRows"></tbody></table></div><p class="foot">Each play is 5U. 1U = $2,000 unless otherwise stated.</p></section>
+<section class="features"><div>♢ <p><b>ELITE ANALYSIS</b><br>Data. Film. Edges.<br>All we do.</p></div><div>◎ <p><b>5 UNIT STANDARD</b><br>Every Exclusive Play<br>is 5U unless stated.</p></div><div>🔒 <p><b>EXCLUSIVE ACCESS</b><br>High conviction plays.<br>Limited access.</p></div><div>Ⓟ <p><b>PHANTOM PICKS</b><br>No face. No name.<br>Just wins.</p></div></section>
+<section id="terms" class="terms"><b>Exclusive Play Terms:</b> $20 per drop. A loss keeps access active until the next Exclusive Play wins. A push grants the next Exclusive Play free. A win ends access. All sales final.</section>
+</main><script src="app.js"></script></body></html>

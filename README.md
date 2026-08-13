@@ -1,24 +1,21 @@
-# PHANTOM PICKS — THE DROP / Launch Build
+# Phantom Picks — Exclusive Play Redesign
 
-This package is the deployable implementation of the approved finished black/red/gold mockup.
+Files:
+- `index.html` — public Exclusive Play landing page
+- `admin.html` — local Command Center demo (post / grade / edit / delete)
+- `styles.css` — responsive black/gold UI
+- `app.js` — ledger, record, profit and ROI calculations
+- `assets/phantom-character.png` — visual asset from the approved mockup
+- `design-reference.png` — approved visual reference
 
-## Existing data
-This build reads the existing Site 3 Supabase tables. It does not hard-code or replace your settled history.
-Do NOT clear the Supabase project.
+## Rules built into the presentation
+- Exclusive Play: $20
+- Standard sizing: 5U
+- 1U = $2,000 unless otherwise stated
+- Loss: buyer remains unlocked until an Exclusive Play wins
+- Push: next Exclusive Play is free
+- Win: access ends; next drop requires a new purchase
+- No refunds / all sales final
 
-## Included
-- Finished THE DROP public page, including the full bottom/footer
-- New Phantom hero artwork designed to blend into the background
-- Heavy customer-side locked-pick blur
-- Multiple live Exclusive Plays
-- Default 5U per play
-- 1U = $2,000
-- Profit + ROI based on American odds and actual units
-- Previous Drops / Receipts
-- Owner Command Center
-- WIN / LOSS / PUSH settlement
-- Delete live plays
-- DELETE DROP for previous/settled plays with confirmation
-- Existing $20 Whop unlock link
-
-Upload every file in this ZIP to the existing Site 3 GitHub repository, replacing matching files.
+## Important before production
+The included Command Center uses browser `localStorage`, so it is a functional front-end prototype and works on the same browser/device. For a live multi-device site, connect it to the existing Supabase/Auth backend and RLS setup. The Unlock button is intentionally not wired to a made-up checkout URL; connect it to the real Whop purchase/access flow before launch.
