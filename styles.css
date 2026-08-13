@@ -15,3 +15,35 @@
   .hero-art{right:-62px;width:67%;height:390px;top:12px;opacity:.9;background-position:62% top}
   .locked-card{bottom:12px}
 }
+
+
+/* NO-CHARACTER HERO + SELF-CONTAINED BRAND FIX */
+.hero-panel{
+  background:
+    radial-gradient(circle at 72% 22%,rgba(241,185,28,.12),transparent 30%),
+    linear-gradient(145deg,rgba(13,14,15,.99),rgba(3,4,4,.995));
+}
+.hero-art{display:none!important;background:none!important}
+.hero-mark{
+  position:absolute;right:8%;top:54px;width:285px;height:285px;border-radius:50%;
+  border:2px solid rgba(241,185,28,.64);display:grid;place-items:center;z-index:1;
+  box-shadow:0 0 0 14px rgba(241,185,28,.025),0 0 70px rgba(241,185,28,.10),inset 0 0 70px rgba(241,185,28,.06);
+  opacity:.95;
+}
+.hero-mark::before,.hero-mark::after{content:"";position:absolute;border-radius:50%;inset:20px;border:1px solid rgba(241,185,28,.22)}
+.hero-mark::after{inset:42px;border-color:rgba(241,185,28,.12)}
+.hero-mark span{
+  font-size:168px;line-height:1;font-weight:950;font-style:italic;letter-spacing:-.12em;
+  color:transparent;-webkit-text-stroke:5px #f1b91c;text-shadow:0 0 24px rgba(241,185,28,.30);
+  transform:translateX(-10px) skewX(-10deg);
+}
+.hero-copy{position:relative;z-index:3}
+.brand img,.strip-logo img{background:transparent!important;border:0!important}
+
+@media(max-width:600px){
+  .hero-panel{min-height:690px}
+  .hero-copy{width:88%;padding-right:18px}
+  .hero-mark{right:-34px;top:58px;width:235px;height:235px;opacity:.42}
+  .hero-mark span{font-size:138px;-webkit-text-stroke-width:4px}
+  .locked-card{z-index:4}
+}
