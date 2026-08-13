@@ -1,18 +1,25 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phantom Picks — Exclusive Play</title><link rel="stylesheet" href="styles.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phantom Picks — Exclusive Play</title><link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
 <body><main class="page">
-<header class="brand"><div class="brand-mark">PP</div><div><div class="brand-name">PHANTOM PICKS</div><div class="brand-sub">EXCLUSIVE PLAY</div></div></header>
-<section class="hero"><div class="eyebrow">ONE-TIME • $20</div><h1>EXCLUSIVE<br><span>PLAY</span></h1><p class="intro">One purchase gets you access until an Exclusive Play wins. Losses and pushes roll your access forward to the next release.</p></section>
+<header class="brand"><div class="brand-mark"><span>P</span></div><div><div class="brand-name">PHANTOM PICKS</div><div class="brand-sub">EXCLUSIVE</div></div></header>
+<section class="hero"><div class="eyebrow">ONE-TIME • $20</div><h1>TODAY'S <span>EXCLUSIVE PLAY</span></h1>
+<p class="intro">Our highest conviction. Backed by data. Driven by results.</p></section>
 <section class="record-card"><div><div class="record-label">EXCLUSIVE PLAY RECORD</div><div class="record-value"><span id="wins">0</span>-<span id="losses">0</span>-<span id="pushes">0</span></div></div><div class="record-meta"><span id="winRate">0%</span><small>WIN RATE</small></div></section>
-<section class="play-shell"><div class="status-row"><span class="live-dot"></span><span id="playStatus">EXCLUSIVE PLAY IS LIVE</span></div>
-<div class="play-card"><div class="card-top"><span>PHANTOM'S EXCLUSIVE</span><span class="lock">LOCKED</span></div><div class="blurred-content"><div class="sport" id="sport">SPORT • TODAY</div><div class="matchup" id="matchup">Matchup Hidden</div><div class="pick" id="pick">Exclusive Pick Hidden</div><div class="details" id="odds">Odds Hidden</div></div><div class="lock-overlay"><div class="lock-icon">🔒</div><strong>PLAY LOCKED</strong><span>Unlock to reveal the full pick.</span></div></div>
-<a class="unlock" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener"><span>UNLOCK EXCLUSIVE PLAY</span><b>$20</b></a><p class="fine-print">ONE-TIME PURCHASE • NO REFUNDS</p></section>
-<section class="rules"><div class="rule"><b>WIN</b><span>Access ends after the winner.</span></div><div class="rule"><b>LOSS</b><span>Next Exclusive Play is included.</span></div><div class="rule"><b>PUSH</b><span>Next Exclusive Play is included.</span></div></section>
-
-<section class="history-section">
-  <div class="record-label" style="margin:18px 2px 10px">PREVIOUS EXCLUSIVE PLAYS</div>
-  <div class="history-list" id="publicHistory">
-    <div class="history-empty">No previous Exclusive Plays yet.</div>
-  </div>
+<section class="performance-strip">
+  <div><small>NET PROFIT</small><strong id="netProfit">$0</strong></div>
+  <div><small>ROI</small><strong id="roi">0.0%</strong></div>
+  <div><small>UNIT VALUE</small><strong>$2,000</strong></div>
+  <div><small>DEFAULT PLAY</small><strong>5U</strong></div>
 </section>
-
-<footer><span>PHANTOM PICKS</span><span>EXCLUSIVE ACCESS • ONE PLAY AT A TIME</span></footer></main><script src="config.js"></script><script src="app.js"></script></body></html>
+<section class="play-shell">
+<div class="status-row"><span class="live-dot"></span><span id="playStatus">CHECKING EXCLUSIVE PLAYS</span></div>
+<div id="currentPlays" class="current-plays"><div class="history-empty">Loading...</div></div>
+<a class="unlock" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener"><span>🔒 UNLOCK NOW</span><b>$20</b></a>
+<p class="fine-print">ONE-TIME PURCHASE • NO REFUNDS • LOSS/PUSH ROLLS ACCESS TO THE NEXT EXCLUSIVE PLAY</p>
+</section>
+<section class="rules"><div class="rule"><b>⚡ ONE-TIME PURCHASE</b><span>One payment for today's release.</span></div><div class="rule"><b>🛡 NO REFUNDS</b><span>All purchases are final.</span></div><div class="rule"><b>↻ LOSS/PUSH</b><span>Access rolls forward.</span></div></section>
+<section class="history-section"><div class="section-title">PREVIOUS <span>EXCLUSIVE PLAYS</span></div><div class="history-list" id="publicHistory"><div class="history-empty">No previous Exclusive Plays yet.</div></div></section>
+<footer><span>PHANTOM PICKS</span><span>EXCLUSIVE ACCESS</span></footer>
+</main><script src="config.js"></script><script src="app.js"></script></body></html>

@@ -1,253 +1,77 @@
 (() => {
-  const cfg = window.PHANTOM_CONFIG || {};
-  const loginView = document.getElementById("loginView");
-  const adminView = document.getElementById("adminView");
-  const loginMsg = document.getElementById("loginMsg");
-  const saveMsg = document.getElementById("saveMsg");
-  const gradeMsg = document.getElementById("gradeMsg");
+ const cfg=window.PHANTOM_CONFIG||{}, $=id=>document.getElementById(id);
+ if(!cfg.SUPABASE_URL||cfg.SUPABASE_URL.includes("PASTE_")){$("loginMsg").textContent="Add Supabase settings in config.js first.";return}
+ const db=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
+ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ let draftCount=1;
+ function show(session){$("loginView").classList.toggle("hidden",!!session);$("adminView").classList.toggle("hidden",!session);if(session)refresh()}
+ async function session(){const {data}=await db.auth.getSession();show(data.session)}
+ $("loginBtn").onclick=async()=>{ $("loginMsg").textContent="Signing in..."; const {error}=await db.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value}); if(error)$("loginMsg").textContent=error.message; else {$("loginMsg").textContent="";show(true)}};
+ $("loginPassword").onkeydown=e=>{if(e.key==="Enter")$("loginBtn").click()};
+ $("logoutBtn").onclick=async()=>{await db.auth.signOut();show(false)};
+ db.auth.onAuthStateChange((_e,s)=>show(s));
 
-  if (!cfg.SUPABASE_URL || cfg.SUPABASE_URL.includes("PASTE_")) {
-    loginMsg.textContent = "Add your Supabase URL and publishable/anon key in config.js first.";
-    return;
-  }
+ function rowHtml(n){return `<div class="play-editor" data-row="${n}"><div class="play-editor-head"><b>PLAY ${n}</b>${n>1?'<button class="mini danger remove-draft" type="button">DELETE</button>':''}</div><div class="grid4"><div class="field"><label>PICK</label><input class="d-pick" placeholder="Over 9.5 runs"></div><div class="field"><label>ODDS</label><input class="d-odds" placeholder="-120"></div><div class="field"><label>UNITS</label><input class="d-units" type="number" min=".5" step=".5" value="5"></div><div class="field"><label>MATCHUP</label><input class="d-matchup" placeholder="Yankees vs Red Sox"></div></div></div>`}
+ function renderDrafts(){const wrap=$("playRows"),existing=[...wrap.querySelectorAll(".play-editor")].map(r=>({p:r.querySelector(".d-pick")?.value||"",o:r.querySelector(".d-odds")?.value||"",m:r.querySelector(".d-matchup")?.value||""}));wrap.innerHTML=Array.from({length:draftCount},(_,i)=>rowHtml(i+1)).join("");[...wrap.querySelectorAll(".play-editor")].forEach((r,i)=>{if(existing[i]){r.querySelector(".d-pick").value=existing[i].p;r.querySelector(".d-odds").value=existing[i].o;r.querySelector(".d-units").value=existing[i].u||"5";r.querySelector(".d-matchup").value=existing[i].m}});wrap.querySelectorAll(".remove-draft").forEach((b,i)=>b.onclick=()=>{b.closest(".play-editor").remove();draftCount=Math.max(1,wrap.querySelectorAll(".play-editor").length);renumber()})}
+ function renumber(){[...$("playRows").querySelectorAll(".play-editor")].forEach((r,i)=>{r.dataset.row=i+1;r.querySelector("b").textContent=`PLAY ${i+1}`});draftCount=$("playRows").querySelectorAll(".play-editor").length}
+ $("addPlay").onclick=()=>{draftCount++;renderDrafts()}; renderDrafts();
 
-  const db = supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
-  let state = { is_live:false, is_locked:false, is_settled:false, updated_at:null };
-  let currentPlay = { sport:"", matchup:"", pick_text:"", odds:"" };
-  let editMode = false;
-  let previewUnlocked = false;
+ $("savePlay").onclick=async()=>{
+   const sport=$("sport").value.trim(), live=$("isLive").value==="true";
+   const plays=[...document.querySelectorAll(".play-editor")].map(r=>({sport,matchup:r.querySelector(".d-matchup").value.trim(),pick_text:r.querySelector(".d-pick").value.trim(),odds:r.querySelector(".d-odds").value.trim(),units:Number(r.querySelector(".d-units").value||5)})).filter(p=>p.pick_text||p.matchup||p.odds);
+   if(!plays.length){$("saveMsg").textContent="Add at least one play.";return}
+   $("saveMsg").textContent="Posting...";
+   const {data:maxRows}=await db.from("exclusive_current").select("id").order("id",{ascending:false}).limit(1);
+   let next=(maxRows?.[0]?.id||0)+1, now=new Date().toISOString();
+   const payload=plays.map(p=>({...p,id:next++,is_live:live,is_locked:true,is_settled:false,updated_at:now}));
+   const {error}=await db.from("exclusive_current").insert(payload);
+   if(error){$("saveMsg").textContent=error.message;return}
+   $("saveMsg").textContent=`Posted ${plays.length} Exclusive Play${plays.length>1?"s":""}.`;
+   draftCount=1;renderDrafts();document.querySelectorAll(".play-editor input").forEach(i=>i.value="");refresh();
+ };
 
-  function showLoggedOut(){ loginView.classList.remove("hidden"); adminView.classList.add("hidden"); }
-  function showLoggedIn(){ loginView.classList.add("hidden"); adminView.classList.remove("hidden"); loadCurrent(); }
+ const fmt=iso=>iso?new Date(iso).toLocaleDateString([],{month:"short",day:"numeric",year:"numeric"}):"";
+ const UNIT_VALUE=2000;
+ function unitProfit(r){
+   const u=Number(r.units||5),o=Number(r.odds);
+   if(r.result==="LOSS")return -u;
+   if(r.result==="PUSH")return 0;
+   if(r.result==="WIN" && Number.isFinite(o) && o!==0) return o<0?u*100/Math.abs(o):u*o/100;
+   return 0;
+ }
+ function money(v){const sign=v<0?"-":"";return `${sign}$${Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:0})}`}
 
-  async function checkSession(){
-    const { data } = await db.auth.getSession();
-    data.session ? showLoggedIn() : showLoggedOut();
-  }
-
-  document.getElementById("loginBtn").addEventListener("click", async () => {
-    loginMsg.textContent = "Signing in...";
-    const { error } = await db.auth.signInWithPassword({
-      email: document.getElementById("loginEmail").value.trim(),
-      password: document.getElementById("loginPassword").value
-    });
-    if (error) return loginMsg.textContent = error.message;
-    loginMsg.textContent = "";
-    showLoggedIn();
-  });
-
-  document.getElementById("loginPassword").addEventListener("keydown", e => {
-    if (e.key === "Enter") document.getElementById("loginBtn").click();
-  });
-
-  document.getElementById("logoutBtn").addEventListener("click", async () => {
-    await db.auth.signOut(); showLoggedOut();
-  });
-
-  db.auth.onAuthStateChange((_event, session) => session ? showLoggedIn() : showLoggedOut());
-
-  function formatTime(iso){
-    if(!iso) return "Not submitted yet.";
-    const d = new Date(iso);
-    return "Last submitted " + d.toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
-  }
-
-  function historyDate(iso){
-    if(!iso) return "";
-    const d = new Date(iso);
-    return d.toLocaleDateString([], {month:"short",day:"numeric",year:"numeric"});
-  }
-
-  async function loadHistory(){
-    const { data, error } = await db.from("exclusive_results")
-      .select("result,sport,matchup,pick_text,odds,created_at")
-      .order("created_at",{ascending:false});
-    const wrap = document.getElementById("adminHistory");
-    if(!wrap) return;
-    if(error){
-      wrap.innerHTML = `<div class="history-empty">${error.message}</div>`;
-      return;
-    }
-    if(!data || !data.length){
-      wrap.innerHTML = '<div class="history-empty">No previous Exclusive Plays yet.</div>';
-      return;
-    }
-    wrap.innerHTML = data.map(r => `<div class="history-card">
-      <div class="history-row">
-        <div class="history-main">
-          <div class="history-sport">${r.sport || "EXCLUSIVE PLAY"}</div>
-          <div class="history-pick">${r.pick_text || "Previous Exclusive Play"}</div>
-          <div class="history-matchup">${r.matchup || ""}</div>
-          <div class="history-meta"><span>${r.odds || ""}</span><span>${historyDate(r.created_at)}</span></div>
-        </div>
-        <span class="history-result">${r.result}</span>
-      </div>
-    </div>`).join("");
-  }
-
-  function renderPreview(){
-    document.getElementById("previewSport").textContent = currentPlay.sport || "SPORT • TODAY";
-    document.getElementById("previewMatchup").textContent = currentPlay.matchup || "Matchup Hidden";
-    document.getElementById("previewPick").textContent = currentPlay.pick_text || "Exclusive Pick Hidden";
-    document.getElementById("previewOdds").textContent = currentPlay.odds || "Odds Hidden";
-
-    const card = document.getElementById("previewCard");
-    card.classList.toggle("unlocked", previewUnlocked);
-    document.getElementById("previewLockLabel").textContent = previewUnlocked ? "UNLOCKED" : "LOCKED";
-    document.getElementById("showLocked").classList.toggle("btn-primary", !previewUnlocked);
-    document.getElementById("showUnlocked").classList.toggle("btn-primary", previewUnlocked);
-  }
-
-  function render(){
-    const submitted = !!(currentPlay.sport || currentPlay.matchup || currentPlay.pick_text || currentPlay.odds);
-    document.getElementById("submissionTitle").textContent = submitted ? (state.is_live ? "PLAY SUBMITTED • LIVE" : "PLAY SAVED • NOT LIVE") : "NO PLAY SUBMITTED";
-    document.getElementById("submissionTime").textContent = submitted ? formatTime(state.updated_at) : "Save a play to publish it.";
-    document.getElementById("submissionDot").classList.toggle("sent", submitted);
-
-    document.getElementById("livePill").textContent = state.is_live ? "LIVE" : "NOT LIVE";
-    document.getElementById("lockPill").textContent = state.is_locked ? "LOCKED" : "UNLOCKED";
-    document.getElementById("settledPill").textContent = state.is_settled ? "SETTLED" : "NOT SETTLED";
-    document.getElementById("livePill").classList.toggle("on", state.is_live);
-    document.getElementById("lockPill").classList.toggle("on", state.is_locked);
-    document.getElementById("settledPill").classList.toggle("on", state.is_settled);
-
-    const freeze = state.is_locked && !editMode;
-    ["sport","matchup","pickText","odds","isLive"].forEach(id => document.getElementById(id).disabled = freeze);
-
-    document.getElementById("savePlay").disabled = freeze;
-    document.getElementById("editPlay").disabled = !submitted;
-    document.getElementById("editPlay").textContent = editMode ? "CANCEL EDIT" : "EDIT PLAY";
-    document.getElementById("lockPlay").textContent = state.is_locked ? "UNLOCK PLAY" : "LOCK PLAY";
-    document.getElementById("settledCheck").checked = state.is_settled;
-    document.querySelectorAll(".grade").forEach(b => b.disabled = !state.is_settled);
-
-    renderPreview();
-  }
-
-  async function loadCurrent(){
-    const { data, error } = await db.from("exclusive_current").select("*").eq("id",1).maybeSingle();
-    if(error){ saveMsg.textContent=error.message; return; }
-    if(!data) return;
-
-    currentPlay = {
-      sport:data.sport || "",
-      matchup:data.matchup || "",
-      pick_text:data.pick_text || "",
-      odds:data.odds || ""
-    };
-
-    document.getElementById("sport").value=currentPlay.sport;
-    document.getElementById("matchup").value=currentPlay.matchup;
-    document.getElementById("pickText").value=currentPlay.pick_text;
-    document.getElementById("odds").value=currentPlay.odds;
-    document.getElementById("isLive").value=String(!!data.is_live);
-
-    state = {
-      is_live:!!data.is_live,
-      is_locked:!!data.is_locked,
-      is_settled:!!data.is_settled,
-      updated_at:data.updated_at || null
-    };
-    editMode = false;
-    render();
-    loadHistory();
-  }
-
-  document.getElementById("editPlay").addEventListener("click", () => {
-    editMode = !editMode;
-    if (!editMode) {
-      document.getElementById("sport").value=currentPlay.sport;
-      document.getElementById("matchup").value=currentPlay.matchup;
-      document.getElementById("pickText").value=currentPlay.pick_text;
-      document.getElementById("odds").value=currentPlay.odds;
-      document.getElementById("isLive").value=String(state.is_live);
-      saveMsg.textContent = "Edit cancelled.";
-    } else {
-      saveMsg.textContent = "Edit mode enabled. Make changes, then press SUBMIT PLAY.";
-    }
-    render();
-  });
-
-  document.getElementById("savePlay").addEventListener("click", async () => {
-    saveMsg.textContent = "Submitting...";
-    const now = new Date().toISOString();
-    const payload = {
-      id:1,
-      sport:document.getElementById("sport").value.trim(),
-      matchup:document.getElementById("matchup").value.trim(),
-      pick_text:document.getElementById("pickText").value.trim(),
-      odds:document.getElementById("odds").value.trim(),
-      is_live:document.getElementById("isLive").value==="true",
-      is_settled:false,
-      updated_at:now
-    };
-    const { error } = await db.from("exclusive_current").upsert(payload);
-    if(error){ saveMsg.textContent=error.message; return; }
-
-    currentPlay = { sport:payload.sport, matchup:payload.matchup, pick_text:payload.pick_text, odds:payload.odds };
-    state.is_live = payload.is_live;
-    state.is_settled = false;
-    state.updated_at = now;
-    editMode = false;
-    saveMsg.textContent = payload.is_live ? "Submitted. Customer page is now showing this play." : "Saved, but not live to customers.";
-    render();
-  });
-
-  document.getElementById("lockPlay").addEventListener("click", async () => {
-    const next=!state.is_locked;
-    const { error }=await db.from("exclusive_current").update({is_locked:next,updated_at:new Date().toISOString()}).eq("id",1);
-    if(!error) state.is_locked=next;
-    editMode = false;
-    saveMsg.textContent=error?error.message:(next?"Play locked.":"Play unlocked for editing.");
-    render();
-  });
-
-  document.getElementById("refreshPreview").addEventListener("click", async () => {
-    saveMsg.textContent = "Refreshing preview...";
-    await loadCurrent();
-    saveMsg.textContent = "Preview refreshed.";
-  });
-
-  document.getElementById("showLocked").addEventListener("click", () => {
-    previewUnlocked = false;
-    renderPreview();
-  });
-
-  document.getElementById("showUnlocked").addEventListener("click", () => {
-    previewUnlocked = true;
-    renderPreview();
-  });
-
-  document.getElementById("settledCheck").addEventListener("change", async e => {
-    const next=e.target.checked;
-    const { error }=await db.from("exclusive_current").update({is_settled:next,updated_at:new Date().toISOString()}).eq("id",1);
-    if(!error) state.is_settled=next;
-    gradeMsg.textContent=error?error.message:(next?"Bet settled. Grading enabled.":"Settlement removed. Grading disabled.");
-    render();
-  });
-
-  document.querySelectorAll(".grade").forEach(btn => btn.addEventListener("click", async () => {
-    if(!state.is_settled){ gradeMsg.textContent="Mark the bet settled first."; return; }
-    const result=btn.dataset.result;
-    gradeMsg.textContent="Grading...";
-    const { error }=await db.from("exclusive_results").insert({
-      result,
-      sport:currentPlay.sport,
-      matchup:currentPlay.matchup,
-      pick_text:currentPlay.pick_text,
-      odds:currentPlay.odds
-    });
-    if(error){ gradeMsg.textContent=error.message; return; }
-
-    await db.from("exclusive_current").update({
-      is_live:false,is_locked:true,is_settled:true,updated_at:new Date().toISOString()
-    }).eq("id",1);
-
-    state.is_live=false; state.is_locked=true; state.is_settled=true;
-    gradeMsg.textContent=`${result} recorded. Tracker updated.`;
-    render();
-    loadHistory();
-  }));
-
-  checkSession();
+ async function loadActive(){
+   const {data,error}=await db.from("exclusive_current").select("*").eq("is_settled",false).order("id");
+   if(error){$("activeAdmin").innerHTML=`<div class="history-empty">${esc(error.message)}</div>`;return}
+   $("activeAdmin").innerHTML=data?.length?data.map(r=>`<div class="history-card"><div class="history-row"><div class="history-main"><div class="history-sport">${esc(r.sport)}</div><div class="history-pick">${esc(r.pick_text)}</div><div class="history-matchup">${esc(r.matchup)}</div><div class="history-meta"><span>${esc(r.odds)}</span><span>${Number(r.units||5).toFixed(1)}U</span><span>${r.is_live?"LIVE":"HIDDEN"}</span></div></div><div class="grade-stack"><button class="mini win" data-grade="WIN" data-id="${r.id}">WIN</button><button class="mini loss" data-grade="LOSS" data-id="${r.id}">LOSS</button><button class="mini push" data-grade="PUSH" data-id="${r.id}">PUSH</button><button class="mini danger" data-delete-current="${r.id}">DELETE</button></div></div></div>`).join(""):'<div class="history-empty">No active plays.</div>';
+   document.querySelectorAll("[data-grade]").forEach(b=>b.onclick=()=>grade(Number(b.dataset.id),b.dataset.grade));
+   document.querySelectorAll("[data-delete-current]").forEach(b=>b.onclick=()=>deleteCurrent(Number(b.dataset.deleteCurrent)));
+ }
+ async function grade(id,result){
+   if(!confirm(`Settle this play as ${result}?`))return;
+   $("gradeMsg").textContent="Settling...";
+   const {data:r,error:e}=await db.from("exclusive_current").select("*").eq("id",id).single(); if(e){$("gradeMsg").textContent=e.message;return}
+   const {error:ie}=await db.from("exclusive_results").insert({result,sport:r.sport,matchup:r.matchup,pick_text:r.pick_text,odds:r.odds,units:Number(r.units||5),created_at:new Date().toISOString()});if(ie){$("gradeMsg").textContent=ie.message;return}
+   const {error:de}=await db.from("exclusive_current").delete().eq("id",id);$("gradeMsg").textContent=de?de.message:`Play settled as ${result}.`;refresh()
+ }
+ async function deleteCurrent(id){if(!confirm("Delete this active play? This cannot be undone."))return;const {error}=await db.from("exclusive_current").delete().eq("id",id);$("gradeMsg").textContent=error?error.message:"Active play deleted.";refresh()}
+ async function loadHistory(){
+   const {data,error}=await db.from("exclusive_results").select("*").order("created_at",{ascending:false});
+   if(error){$("adminHistory").innerHTML=`<div class="history-empty">${esc(error.message)}</div>`;return}
+   const rows=data||[];
+   const totalUnits=rows.reduce((s,r)=>s+Number(r.units||5),0);
+   const netUnits=rows.reduce((s,r)=>s+unitProfit(r),0);
+   const netDollars=netUnits*UNIT_VALUE;
+   $("adminProfit").textContent=money(netDollars);
+   $("adminRoi").textContent=totalUnits?`${(netUnits/totalUnits*100).toFixed(1)}%`:"0.0%";
+   $("adminHistory").innerHTML=rows.length?rows.map(r=>{
+     const pu=unitProfit(r),pd=pu*UNIT_VALUE;
+     return `<div class="history-card"><div class="history-row"><div class="history-main"><div class="history-sport">${esc(r.sport)}</div><div class="history-pick">${esc(r.pick_text)}</div><div class="history-matchup">${esc(r.matchup)}</div><div class="history-meta"><span>${esc(r.odds)}</span><span>${Number(r.units||5).toFixed(1)}U</span><span>${fmt(r.created_at)}</span><span>${pu>=0?"+":""}${pu.toFixed(2)}U</span><span>${money(pd)}</span></div></div><div class="grade-stack"><span class="history-result ${String(r.result).toLowerCase()}">${esc(r.result)}</span><button class="mini danger" data-delete-result="${r.id}">DELETE</button></div></div></div>`
+   }).join(""):'<div class="history-empty">No previous plays.</div>';
+   document.querySelectorAll("[data-delete-result]").forEach(b=>b.onclick=()=>deleteResult(Number(b.dataset.deleteResult)));
+ }
+ async function deleteResult(id){if(!confirm("Permanently delete this settled play from Previous Exclusive Plays?"))return;const {error}=await db.from("exclusive_results").delete().eq("id",id);$("gradeMsg").textContent=error?error.message:"Settled play deleted.";refresh()}
+ function refresh(){loadActive();loadHistory()}
+ session();
 })();

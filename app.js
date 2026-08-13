@@ -1,60 +1,43 @@
 (() => {
- const cfg=window.PHANTOM_CONFIG||{}; if(!cfg.SUPABASE_URL||cfg.SUPABASE_URL.includes("PASTE_"))return;
+ const cfg=window.PHANTOM_CONFIG||{};
+ if(!cfg.SUPABASE_URL||cfg.SUPABASE_URL.includes("PASTE_")) return;
  const db=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
-
- function fmtDate(iso){
-   if(!iso) return "";
-   const d=new Date(iso);
-   return d.toLocaleDateString([], {month:"short",day:"numeric",year:"numeric"});
+ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const date=iso=>iso?new Date(iso).toLocaleDateString([],{month:"short",day:"numeric",year:"numeric"}):"";
+ const UNIT_VALUE=2000;
+ function unitProfit(r){
+   const u=Number(r.units||5),o=Number(r.odds);
+   if(r.result==="LOSS")return -u;
+   if(r.result==="PUSH")return 0;
+   if(r.result==="WIN" && Number.isFinite(o) && o!==0)return o<0?u*100/Math.abs(o):u*o/100;
+   return 0;
  }
+ function money(v){const sign=v<0?"-":"";return `${sign}$${Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:0})}`}
 
+ function lockedCard(r,i){
+   return `<div class="play-card"><div class="card-top"><span>PLAY ${String(i+1).padStart(2,"0")} • ${Number(r.units||5).toFixed(1)}U</span><span class="lock">LOCKED</span></div>
+   <div class="blurred-content"><div class="sport">${esc(r.sport)}</div><div class="matchup">${esc(r.matchup)}</div><div class="pick">${esc(r.pick_text)}</div><div class="details">${esc(r.odds)}</div></div>
+   <div class="lock-overlay"><div class="lock-icon">🔒</div><strong>EXCLUSIVE PLAY LOCKED</strong><span>Unlock to reveal the full pick.</span></div></div>`;
+ }
  function historyCard(r){
-   return `<div class="history-card">
-     <div class="history-row">
-       <div class="history-main">
-         <div class="history-sport">${r.sport || "EXCLUSIVE PLAY"}</div>
-         <div class="history-pick">${r.pick_text || "Previous Exclusive Play"}</div>
-         <div class="history-matchup">${r.matchup || ""}</div>
-         <div class="history-meta">
-           <span>${r.odds || ""}</span>
-           <span>${fmtDate(r.created_at)}</span>
-         </div>
-       </div>
-       <span class="history-result">${r.result}</span>
-     </div>
-   </div>`;
- }
-
+   const pu=unitProfit(r),pd=pu*UNIT_VALUE;
+   return `<div class="history-card"><div class="history-row"><div class="history-main"><div class="history-sport">${esc(r.sport||"EXCLUSIVE PLAY")}</div><div class="history-pick">${esc(r.pick_text||"Previous Exclusive Play")}</div><div class="history-matchup">${esc(r.matchup||"")}</div><div class="history-meta"><span>${esc(r.odds||"")}</span><span>${Number(r.units||5).toFixed(1)}U</span><span>${date(r.created_at)}</span><span>${pu>=0?"+":""}${pu.toFixed(2)}U</span><span>${money(pd)}</span></div></div><span class="history-result ${String(r.result).toLowerCase()}">${esc(r.result)}</span></div></div>`}
  async function load(){
-  const {data:play}=await db.from("exclusive_current").select("*").eq("id",1).maybeSingle();
-  if(play){
-   document.getElementById("sport").textContent=play.sport||"SPORT • TODAY";
-   document.getElementById("matchup").textContent=play.matchup||"Matchup Hidden";
-   document.getElementById("pick").textContent=play.pick_text||"Exclusive Pick Hidden";
-   document.getElementById("odds").textContent=play.odds||"";
-   let s="NO EXCLUSIVE PLAY POSTED";
-   if(play.is_live && play.is_locked) s="EXCLUSIVE PLAY LOCKED IN";
-   else if(play.is_live) s="EXCLUSIVE PLAY IS LIVE";
-   else if(play.is_settled) s="EXCLUSIVE PLAY SETTLED";
-   document.getElementById("playStatus").textContent=s;
-  }
-
-  const {data:rows}=await db.from("exclusive_results")
-    .select("result,sport,matchup,pick_text,odds,created_at")
-    .order("created_at",{ascending:false});
-
-  let w=0,l=0,p=0;
-  (rows||[]).forEach(r=>{if(r.result==="WIN")w++;if(r.result==="LOSS")l++;if(r.result==="PUSH")p++;});
-  document.getElementById("wins").textContent=w;
-  document.getElementById("losses").textContent=l;
-  document.getElementById("pushes").textContent=p;
-  const graded=w+l;
-  document.getElementById("winRate").textContent=graded?Math.round((w/graded)*100)+"%":"0%";
-
-  const history=document.getElementById("publicHistory");
-  history.innerHTML = rows && rows.length
-    ? rows.slice(0,10).map(historyCard).join("")
-    : '<div class="history-empty">No previous Exclusive Plays yet.</div>';
+   const [{data:current,error:ce},{data:rows,error:re}]=await Promise.all([
+     db.from("exclusive_current").select("*").eq("is_live",true).eq("is_settled",false).order("id"),
+     db.from("exclusive_results").select("*").order("created_at",{ascending:false})
+   ]);
+   const cp=document.getElementById("currentPlays");
+   if(ce) cp.innerHTML=`<div class="history-empty">${esc(ce.message)}</div>`;
+   else if(current?.length){cp.innerHTML=current.map(lockedCard).join("");document.getElementById("playStatus").textContent=current.length>1?`${current.length} EXCLUSIVE PLAYS ARE LIVE`:"EXCLUSIVE PLAY IS LIVE";}
+   else {cp.innerHTML='<div class="no-live">NO EXCLUSIVE PLAY IS LIVE RIGHT NOW</div>';document.getElementById("playStatus").textContent="NO LIVE PLAY";}
+   const safe=rows||[],w=safe.filter(x=>x.result==="WIN").length,l=safe.filter(x=>x.result==="LOSS").length,p=safe.filter(x=>x.result==="PUSH").length;
+   wins.textContent=w;losses.textContent=l;pushes.textContent=p;winRate.textContent=(w+l)?Math.round(w/(w+l)*100)+"%":"0%";
+   const totalUnits=safe.reduce((s,r)=>s+Number(r.units||5),0);
+   const netUnits=safe.reduce((s,r)=>s+unitProfit(r),0);
+   netProfit.textContent=money(netUnits*UNIT_VALUE);
+   roi.textContent=totalUnits?`${(netUnits/totalUnits*100).toFixed(1)}%`:"0.0%";
+   publicHistory.innerHTML=re?`<div class="history-empty">${esc(re.message)}</div>`:(safe.length?safe.slice(0,20).map(historyCard).join(""):'<div class="history-empty">No previous Exclusive Plays yet.</div>');
  }
  load();
 })();
