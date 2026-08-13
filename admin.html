@@ -1,39 +1,67 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#030303"><title>Exclusive Command Center</title>
-<link rel="stylesheet" href="styles.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020202">
+<title>Exclusive Command Center</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="drop-admin">
-<section class="login-screen" id="loginView"><div class="login-card">
- <div class="brand-mark">P</div><h1>EXCLUSIVE COMMAND CENTER</h1><p>OWNER ACCESS</p>
- <label>EMAIL<input id="loginEmail" type="email" autocomplete="username"></label>
- <label>PASSWORD<input id="loginPassword" type="password" autocomplete="current-password"></label>
- <button id="loginBtn" class="post-btn">ENTER COMMAND CENTER</button><div id="loginMsg" class="msg"></div>
-</div></section>
+<body class="admin-site">
 
-<main class="command-shell hidden" id="adminView">
-<header class="command-header"><div class="brand"><div class="brand-mark">P</div><div><b><em>EXCLUSIVE</em> COMMAND CENTER</b><small>PHANTOM PICKS</small></div></div><button id="logoutBtn" class="outline-btn">LOGOUT</button></header>
-<nav class="command-tabs"><button class="active">🚀 POST PLAY</button><button>🏆 SETTLEMENT</button><button>⚙ SETTINGS</button><button>◉ ACCESS LOG</button></nav>
-
-<section class="command-card">
- <h2>POST NEW EXCLUSIVE PLAY</h2>
- <div class="two-col"><label>SELECT SPORT<input id="sport" value="MLB" placeholder="MLB / NBA / KBO / Other"></label><label>VISIBILITY<select id="isLive"><option value="true">LIVE</option><option value="false">DRAFT / HIDDEN</option></select></label></div>
- <div class="rule-line">DEFAULT <b>5U</b> · 1U = <b>$2,000</b> · CHANGE UNITS ONLY WHEN OTHERWISE STATED</div>
- <div id="playRows"></div><button id="addPlay" class="add-btn">＋ ADD ANOTHER PLAY</button>
- <button id="savePlay" class="post-btn">➤ POST DROP</button><div id="saveMsg" class="msg"></div>
+<section class="login-screen" id="loginView">
+  <div class="login-card">
+    <div class="pmark">P</div>
+    <h1>EXCLUSIVE COMMAND CENTER</h1>
+    <p>PHANTOM PICKS • OWNER ACCESS</p>
+    <label>EMAIL<input id="loginEmail" type="email" autocomplete="username"></label>
+    <label>PASSWORD<input id="loginPassword" type="password" autocomplete="current-password"></label>
+    <button class="postbtn" id="loginBtn">ENTER COMMAND CENTER</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
 </section>
 
-<section class="command-card">
- <h2>LIVE DROPS</h2><div id="activeAdmin" class="admin-list"></div><div id="gradeMsg" class="msg"></div>
+<main class="command hidden" id="adminView">
+<header class="command-top">
+  <div class="brand"><div class="pmark">P</div><div class="brandcopy"><b>EXCLUSIVE COMMAND CENTER</b><span>PHANTOM PICKS</span></div></div>
+  <button class="outline" id="logoutBtn">LOGOUT</button>
+</header>
+
+<nav class="tabs">
+  <button class="active">🚀 POST PLAY</button><button>🏆 SETTLEMENT</button><button>⚙ SETTINGS</button><button>◉ ACCESS LOG</button>
+</nav>
+
+<section class="admin-panel">
+  <h2>POST NEW EXCLUSIVE PLAY</h2>
+  <div class="two">
+    <label>SELECT SPORT<input id="sport" value="MLB" placeholder="MLB / NBA / KBO / Other"></label>
+    <label>VISIBILITY<select id="isLive"><option value="true">LIVE</option><option value="false">DRAFT / HIDDEN</option></select></label>
+  </div>
+  <div class="rule">DEFAULT <b>5U</b> • 1U = <b>$2,000</b> • CHANGE UNITS ONLY WHEN OTHERWISE STATED</div>
+  <div id="playRows"></div>
+  <button class="addbtn" id="addPlay">＋ ADD ANOTHER PLAY</button>
+  <button class="postbtn" id="savePlay">➤ POST DROP</button>
+  <div class="msg" id="saveMsg"></div>
 </section>
 
-<section class="command-card">
- <div class="card-title-row"><h2>PREVIOUS DROPS</h2><div class="mini-stats"><span>NET PROFIT <b id="adminProfit">$0</b></span><span>ROI <b id="adminRoi">0.0%</b></span></div></div>
- <p class="helper">Each settled drop can be permanently deleted below. A confirmation appears before anything is removed.</p>
- <div id="adminHistory" class="admin-list"></div>
+<section class="admin-panel">
+  <h2>LIVE DROPS</h2>
+  <div id="activeAdmin" class="admin-list"></div>
+  <div class="msg" id="gradeMsg"></div>
+</section>
+
+<section class="admin-panel">
+  <div class="admin-title-row">
+    <h2>PREVIOUS DROPS</h2>
+    <div class="admin-stats"><span>NET PROFIT <b id="adminProfit">$0</b></span><span>ROI <b id="adminRoi">0.0%</b></span></div>
+  </div>
+  <p class="helper">Each previous drop includes a permanent DELETE DROP option with confirmation.</p>
+  <div id="adminHistory" class="admin-list"></div>
 </section>
 </main>
-<script src="config.js"></script><script src="admin.js"></script>
-</body></html>
+
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
