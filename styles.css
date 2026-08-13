@@ -47,3 +47,5 @@
   .hero-mark span{font-size:138px;-webkit-text-stroke-width:4px}
   .locked-card{z-index:4}
 }
+
+.play-status{margin:12px auto 0;max-width:360px;display:flex;align-items:center;justify-content:center;gap:10px;padding:9px 13px;border:1px solid #6b5115;border-radius:8px;background:linear-gradient(90deg,#0b100a,#101006);text-align:left}.play-status>span{width:9px;height:9px;border-radius:50%;background:#49e45b;box-shadow:0 0 0 0 rgba(73,228,91,.55);animation:livePulse 1.5s infinite;flex:0 0 auto}.play-status b{display:block;color:#65ef72;font-size:10px;letter-spacing:.13em}.play-status small{display:block;color:#c5c7c5;font-size:8px;margin-top:3px;letter-spacing:.02em}.play-status.inactive>span{background:#777;box-shadow:none;animation:none}.play-status.inactive b{color:#aaa}.play-status.inactive{border-color:#333;background:#0a0b0b}.gold-btn:disabled{cursor:not-allowed;filter:grayscale(.8);opacity:.55}@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(73,228,91,.5)}70%{box-shadow:0 0 0 9px rgba(73,228,91,0)}100%{box-shadow:0 0 0 0 rgba(73,228,91,0)}}

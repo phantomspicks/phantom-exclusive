@@ -11,7 +11,11 @@ function money(n){if(n==null)return '—';const v=Number(n);return `${v>0?'+':v<
 function oddsText(o){if(o==null||o==='')return '—';const n=Number(o);return n>0?`+${n}`:`${n}`}
 function dateParts(date){const d=new Date(`${date}T12:00:00`);return {m:d.toLocaleString('en-US',{month:'short'}).toUpperCase(),day:String(d.getDate()).padStart(2,'0'),y:d.getFullYear()}}
 function render(filter='ALL'){
- const drops=getDrops().filter(x=>x.result!=='PENDING');
+ const allDrops=getDrops();
+ const pending=allDrops.filter(x=>x.result==='PENDING');
+ const status=document.getElementById('playStatus');
+ if(pending.length){status.className='play-status active';status.innerHTML="<span></span><div><b>ACTIVE PLAY LIVE</b><small>Today's Exclusive Play is posted &amp; locked below.</small></div>";unlockBtn.disabled=false;unlockBtn.innerHTML="🔒 &nbsp; UNLOCK ACTIVE PLAY — $20";}else{status.className='play-status inactive';status.innerHTML="<span></span><div><b>NO ACTIVE PLAY</b><small>The next Exclusive Play has not been posted yet.</small></div>";unlockBtn.disabled=true;unlockBtn.innerHTML="NO ACTIVE PLAY RIGHT NOW";}
+ const drops=allDrops.filter(x=>x.result!=='PENDING');
  const show=filter==='ALL'?drops:drops.filter(x=>x.result===filter);
  historyRows.innerHTML=show.length?show.map(x=>{const d=dateParts(x.date);return `<article class="history-row ${x.result.toLowerCase()}-row"><div class="datebox"><small>${d.m}</small><strong>${d.day}</strong><small>${d.y}</small></div><div class="pick"><strong>${x.play}</strong><b>${x.detail||''}</b><small>ODDS: ${oddsText(x.odds)} &nbsp; | &nbsp; UNITS: ${x.units}U</small></div><div class="result"><span class="badge ${x.result.toLowerCase()}">${x.result}</span><span class="profit ${x.profit>0?'positive':x.profit<0?'negative':''}">${money(x.profit)}</span></div></article>`}).join(''):`<p style="color:#777;text-align:center;padding:30px 0;font-size:11px">No ${filter.toLowerCase()} results yet.</p>`;
  const w=drops.filter(x=>x.result==='WIN').length,l=drops.filter(x=>x.result==='LOSS').length,p=drops.filter(x=>x.result==='PUSH').length;
