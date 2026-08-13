@@ -34,3 +34,6 @@ Every public unlock action uses that variable.
 - Braves vs Mets — Over 8.5 Runs — -108 — 5U — WIN — +$9,259.26
 
 The current pending play remains fully obscured on the public page.
+
+## Secure Whop auto-unlock (v4)
+This package now includes Vercel server functions under `/api` for server-side Whop payment verification and shared play storage. Read `SETUP.md` before deploying. The old direct Whop link is intentionally replaced by a server-created checkout so a redirect alone cannot unlock the play.

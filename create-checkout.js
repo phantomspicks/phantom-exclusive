@@ -1,0 +1,2 @@
+const {getDrops,whopCreateCheckout,signPayload,cookie,json}=require('./_lib');
+module.exports=async (req,res)=>{if(req.method!=='POST')return json(res,405,{error:'Method not allowed'});try{const drops=await getDrops();const drop=drops.find(d=>d.result==='PENDING');if(!drop)return json(res,409,{error:'There is no active play to unlock.'});const flow=await whopCreateCheckout({drop,req});res.setHeader('Set-Cookie',cookie('phantom_checkout',signPayload(flow),3600));json(res,200,{purchaseUrl:flow.purchaseUrl});}catch(e){json(res,500,{error:e.message})}};

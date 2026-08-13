@@ -30,13 +30,19 @@
         <article class="locked-card" id="lockedCard">
           <div class="card-kicker">🔒 &nbsp; EXCLUSIVE PLAY</div>
           <div class="play-status active" id="playStatus"><span></span><div><b>ACTIVE PLAY LIVE</b><small>Today's Exclusive Play is posted &amp; locked below.</small></div></div>
-          <div class="secret-window">
-            <div class="fake-pick" aria-hidden="true">
-              <span></span><span></span><span></span>
+          <div class="secret-window" id="secretWindow">
+            <div class="locked-view" id="lockedView">
+              <div class="fake-pick" aria-hidden="true"><span></span><span></span><span></span></div>
+              <div class="lock-medallion">🔒</div>
+              <strong>LOCKED</strong>
+              <small>Unlock to see today's exclusive play.</small>
             </div>
-            <div class="lock-medallion">🔒</div>
-            <strong>LOCKED</strong>
-            <small>Unlock to see today's exclusive play.</small>
+            <div class="revealed-play" id="revealedPlay" hidden>
+              <span class="unlocked-kicker">✓ PURCHASE VERIFIED</span>
+              <strong id="revealedMain">Exclusive Play</strong>
+              <b id="revealedDetail"></b>
+              <small><span id="revealedOdds"></span> &nbsp; • &nbsp; <span id="revealedUnits"></span></small>
+            </div>
           </div>
           <div class="purchase-meta">
             <div><b>♟ &nbsp; 5 UNIT PLAY</b><small>1U = $2,000</small></div>
