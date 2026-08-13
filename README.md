@@ -1,59 +1,32 @@
-# Phantom Picks Exclusive — V7
+# Phantom Picks Exclusive — THE DROP
 
-New:
-- Public page now shows PREVIOUS EXCLUSIVE PLAYS.
-- Admin Command Center now has PREVIOUS EXCLUSIVE PLAYS.
-- History pulls automatically from `exclusive_results`.
-- Each settled play shows result, sport, pick, matchup, odds/book, and date.
-- Public view shows the latest 10.
-- Admin view shows the full settled history currently returned by Supabase.
+Approved fresh redesign built on the existing Site 3 Supabase backend.
 
-No new Supabase SQL is needed if V4+ is already installed.
+## Important
+Do **not** clear or recreate your Supabase tables. The site reads the existing `exclusive_current`
+and `exclusive_results` rows, so your already-settled drops stay in place automatically.
 
+Expected existing settled drops include:
+- Rockies vs Diamondbacks — Over 9.5 — -116 — Aug 12, 2026 — WIN
+- Cubs vs Nationals — Over 9.5 — -117 — Aug 11, 2026 — WIN
+- Braves vs Mets — Over 8.5 — -108 — Aug 10, 2026 — WIN
 
-## Red/Gold Multi-Play Upgrade
-This build adds:
-- Red + gold Exclusive visual system.
-- Multiple simultaneous Exclusive Plays.
-- Separate settlement controls for each active play.
-- Delete controls for accidental active and settled entries.
-- Extremely heavy locked-play blur/overlay so the pick, matchup and odds are not legible before unlock.
+The accidental Cubs vs Nationals Aug 12 / -147 entry should remain deleted.
 
-### IMPORTANT: Supabase update
-Run the full `supabase_schema.sql` once before deploying this build. It adds the authenticated DELETE/UPDATE policy required by the new settlement/delete controls.
+## Features
+- THE DROP public design
+- Owner-only Command Center through Supabase Auth
+- Multiple simultaneous live plays
+- 5U default per play
+- 1U = $2,000
+- Automatic profit and ROI from settled drops
+- WIN / LOSS / PUSH settlement
+- Delete live drops
+- **Delete previous/settled drops** with confirmation
+- Deleting a previous drop immediately removes it from public Receipts and recalculates record, profit, and ROI
+- Customer-side pick details are heavily obscured
+- Existing Whop unlock link retained
 
-### Removing the mistaken Aug 12 Cubs vs Nationals entry
-After deploying and running the SQL:
-1. Open the Command Center.
-2. Go to Previous Exclusive Plays.
-3. Find `Cubs vs Nationals`, `Over 9.5 runs`, `-147`, Aug 12, 2026.
-4. Tap DELETE and confirm.
-Do not delete the Aug 11 Cubs vs Nationals entry.
-
-
-## Profit / ROI Update
-- Default Exclusive Play stake: **5U**
-- Unit value: **1U = $2,000**
-- Every new play defaults to 5U.
-- The Command Center includes a Units field so a play can be overridden when needed.
-- Win profit is calculated from American odds and stake.
-- Loss = negative stake.
-- Push = 0 profit.
-- ROI = total net profit in units / total units risked on settled plays.
-- Public and admin history show per-play units, unit profit, and dollar profit.
-- Public and admin performance sections show cumulative Net Profit and ROI.
-
-Run the updated `supabase_schema.sql` once before deploying so the `units` column exists.
-
-
-## Pixel-match rebuild
-This version was rebuilt visually from scratch using the approved red mockup as the specification while preserving the working Site 3 backend:
-- Approved hooded Phantom hero extracted from the supplied reference
-- Red/black public page matching the mockup structure
-- Matching red/black Command Center
-- 5U default, 1U=$2,000
-- Profit + ROI
-- Multiple plays
-- Per-play settlement
-- Delete controls
-- Heavy locked blur
+## Deploy
+Upload all files in this package to the existing Site 3 GitHub repository and replace matching files.
+Do not run destructive SQL and do not delete your existing Supabase data.

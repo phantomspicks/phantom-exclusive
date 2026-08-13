@@ -1,77 +1,21 @@
 (() => {
- const cfg=window.PHANTOM_CONFIG||{}, $=id=>document.getElementById(id);
- if(!cfg.SUPABASE_URL||cfg.SUPABASE_URL.includes("PASTE_")){$("loginMsg").textContent="Add Supabase settings in config.js first.";return}
- const db=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
- const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- let draftCount=1;
- function show(session){$("loginView").classList.toggle("hidden",!!session);$("adminView").classList.toggle("hidden",!session);if(session)refresh()}
- async function session(){const {data}=await db.auth.getSession();show(data.session)}
- $("loginBtn").onclick=async()=>{ $("loginMsg").textContent="Signing in..."; const {error}=await db.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value}); if(error)$("loginMsg").textContent=error.message; else {$("loginMsg").textContent="";show(true)}};
- $("loginPassword").onkeydown=e=>{if(e.key==="Enter")$("loginBtn").click()};
- $("logoutBtn").onclick=async()=>{await db.auth.signOut();show(false)};
- db.auth.onAuthStateChange((_e,s)=>show(s));
-
- function rowHtml(n){return `<div class="play-editor" data-row="${n}"><div class="play-editor-head"><b>PLAY ${n}</b>${n>1?'<button class="mini danger remove-draft" type="button">DELETE</button>':''}</div><div class="grid4"><div class="field"><label>PICK</label><input class="d-pick" placeholder="Over 9.5 runs"></div><div class="field"><label>ODDS</label><input class="d-odds" placeholder="-120"></div><div class="field"><label>UNITS</label><input class="d-units" type="number" min=".5" step=".5" value="5"></div><div class="field"><label>MATCHUP</label><input class="d-matchup" placeholder="Yankees vs Red Sox"></div></div></div>`}
- function renderDrafts(){const wrap=$("playRows"),existing=[...wrap.querySelectorAll(".play-editor")].map(r=>({p:r.querySelector(".d-pick")?.value||"",o:r.querySelector(".d-odds")?.value||"",m:r.querySelector(".d-matchup")?.value||""}));wrap.innerHTML=Array.from({length:draftCount},(_,i)=>rowHtml(i+1)).join("");[...wrap.querySelectorAll(".play-editor")].forEach((r,i)=>{if(existing[i]){r.querySelector(".d-pick").value=existing[i].p;r.querySelector(".d-odds").value=existing[i].o;r.querySelector(".d-units").value=existing[i].u||"5";r.querySelector(".d-matchup").value=existing[i].m}});wrap.querySelectorAll(".remove-draft").forEach((b,i)=>b.onclick=()=>{b.closest(".play-editor").remove();draftCount=Math.max(1,wrap.querySelectorAll(".play-editor").length);renumber()})}
- function renumber(){[...$("playRows").querySelectorAll(".play-editor")].forEach((r,i)=>{r.dataset.row=i+1;r.querySelector("b").textContent=`PLAY ${i+1}`});draftCount=$("playRows").querySelectorAll(".play-editor").length}
- $("addPlay").onclick=()=>{draftCount++;renderDrafts()}; renderDrafts();
-
- $("savePlay").onclick=async()=>{
-   const sport=$("sport").value.trim(), live=$("isLive").value==="true";
-   const plays=[...document.querySelectorAll(".play-editor")].map(r=>({sport,matchup:r.querySelector(".d-matchup").value.trim(),pick_text:r.querySelector(".d-pick").value.trim(),odds:r.querySelector(".d-odds").value.trim(),units:Number(r.querySelector(".d-units").value||5)})).filter(p=>p.pick_text||p.matchup||p.odds);
-   if(!plays.length){$("saveMsg").textContent="Add at least one play.";return}
-   $("saveMsg").textContent="Posting...";
-   const {data:maxRows}=await db.from("exclusive_current").select("id").order("id",{ascending:false}).limit(1);
-   let next=(maxRows?.[0]?.id||0)+1, now=new Date().toISOString();
-   const payload=plays.map(p=>({...p,id:next++,is_live:live,is_locked:true,is_settled:false,updated_at:now}));
-   const {error}=await db.from("exclusive_current").insert(payload);
-   if(error){$("saveMsg").textContent=error.message;return}
-   $("saveMsg").textContent=`Posted ${plays.length} Exclusive Play${plays.length>1?"s":""}.`;
-   draftCount=1;renderDrafts();document.querySelectorAll(".play-editor input").forEach(i=>i.value="");refresh();
- };
-
- const fmt=iso=>iso?new Date(iso).toLocaleDateString([],{month:"short",day:"numeric",year:"numeric"}):"";
- const UNIT_VALUE=2000;
- function unitProfit(r){
-   const u=Number(r.units||5),o=Number(r.odds);
-   if(r.result==="LOSS")return -u;
-   if(r.result==="PUSH")return 0;
-   if(r.result==="WIN" && Number.isFinite(o) && o!==0) return o<0?u*100/Math.abs(o):u*o/100;
-   return 0;
- }
- function money(v){const sign=v<0?"-":"";return `${sign}$${Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:0})}`}
-
- async function loadActive(){
-   const {data,error}=await db.from("exclusive_current").select("*").eq("is_settled",false).order("id");
-   if(error){$("activeAdmin").innerHTML=`<div class="history-empty">${esc(error.message)}</div>`;return}
-   $("activeAdmin").innerHTML=data?.length?data.map(r=>`<div class="history-card"><div class="history-row"><div class="history-main"><div class="history-sport">${esc(r.sport)}</div><div class="history-pick">${esc(r.pick_text)}</div><div class="history-matchup">${esc(r.matchup)}</div><div class="history-meta"><span>${esc(r.odds)}</span><span>${Number(r.units||5).toFixed(1)}U</span><span>${r.is_live?"LIVE":"HIDDEN"}</span></div></div><div class="grade-stack"><button class="mini win" data-grade="WIN" data-id="${r.id}">WIN</button><button class="mini loss" data-grade="LOSS" data-id="${r.id}">LOSS</button><button class="mini push" data-grade="PUSH" data-id="${r.id}">PUSH</button><button class="mini danger" data-delete-current="${r.id}">DELETE</button></div></div></div>`).join(""):'<div class="history-empty">No active plays.</div>';
-   document.querySelectorAll("[data-grade]").forEach(b=>b.onclick=()=>grade(Number(b.dataset.id),b.dataset.grade));
-   document.querySelectorAll("[data-delete-current]").forEach(b=>b.onclick=()=>deleteCurrent(Number(b.dataset.deleteCurrent)));
- }
- async function grade(id,result){
-   if(!confirm(`Settle this play as ${result}?`))return;
-   $("gradeMsg").textContent="Settling...";
-   const {data:r,error:e}=await db.from("exclusive_current").select("*").eq("id",id).single(); if(e){$("gradeMsg").textContent=e.message;return}
-   const {error:ie}=await db.from("exclusive_results").insert({result,sport:r.sport,matchup:r.matchup,pick_text:r.pick_text,odds:r.odds,units:Number(r.units||5),created_at:new Date().toISOString()});if(ie){$("gradeMsg").textContent=ie.message;return}
-   const {error:de}=await db.from("exclusive_current").delete().eq("id",id);$("gradeMsg").textContent=de?de.message:`Play settled as ${result}.`;refresh()
- }
- async function deleteCurrent(id){if(!confirm("Delete this active play? This cannot be undone."))return;const {error}=await db.from("exclusive_current").delete().eq("id",id);$("gradeMsg").textContent=error?error.message:"Active play deleted.";refresh()}
- async function loadHistory(){
-   const {data,error}=await db.from("exclusive_results").select("*").order("created_at",{ascending:false});
-   if(error){$("adminHistory").innerHTML=`<div class="history-empty">${esc(error.message)}</div>`;return}
-   const rows=data||[];
-   const totalUnits=rows.reduce((s,r)=>s+Number(r.units||5),0);
-   const netUnits=rows.reduce((s,r)=>s+unitProfit(r),0);
-   const netDollars=netUnits*UNIT_VALUE;
-   $("adminProfit").textContent=money(netDollars);
-   $("adminRoi").textContent=totalUnits?`${(netUnits/totalUnits*100).toFixed(1)}%`:"0.0%";
-   $("adminHistory").innerHTML=rows.length?rows.map(r=>{
-     const pu=unitProfit(r),pd=pu*UNIT_VALUE;
-     return `<div class="history-card"><div class="history-row"><div class="history-main"><div class="history-sport">${esc(r.sport)}</div><div class="history-pick">${esc(r.pick_text)}</div><div class="history-matchup">${esc(r.matchup)}</div><div class="history-meta"><span>${esc(r.odds)}</span><span>${Number(r.units||5).toFixed(1)}U</span><span>${fmt(r.created_at)}</span><span>${pu>=0?"+":""}${pu.toFixed(2)}U</span><span>${money(pd)}</span></div></div><div class="grade-stack"><span class="history-result ${String(r.result).toLowerCase()}">${esc(r.result)}</span><button class="mini danger" data-delete-result="${r.id}">DELETE</button></div></div></div>`
-   }).join(""):'<div class="history-empty">No previous plays.</div>';
-   document.querySelectorAll("[data-delete-result]").forEach(b=>b.onclick=()=>deleteResult(Number(b.dataset.deleteResult)));
- }
- async function deleteResult(id){if(!confirm("Permanently delete this settled play from Previous Exclusive Plays?"))return;const {error}=await db.from("exclusive_results").delete().eq("id",id);$("gradeMsg").textContent=error?error.message:"Settled play deleted.";refresh()}
- function refresh(){loadActive();loadHistory()}
- session();
+ const cfg=window.PHANTOM_CONFIG||{},$=id=>document.getElementById(id);if(!cfg.SUPABASE_URL||cfg.SUPABASE_URL.includes("PASTE_")){$("loginMsg").textContent="Add Supabase settings in config.js.";return}
+ const db=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),UNIT=2000;
+ let count=1;
+ function show(s){$("loginView").classList.toggle("hidden",!!s);$("adminView").classList.toggle("hidden",!s);if(s)refresh()}
+ async function boot(){const{data}=await db.auth.getSession();show(data.session)}
+ $("loginBtn").onclick=async()=>{const{error}=await db.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});$("loginMsg").textContent=error?error.message:"";if(!error)show(true)};
+ $("loginPassword").onkeydown=e=>{if(e.key==="Enter")$("loginBtn").click()};$("logoutBtn").onclick=async()=>{await db.auth.signOut();show(false)};db.auth.onAuthStateChange((_e,s)=>show(s));
+ function row(n){return `<div class="builder-row"><div class="builder-head"><b>● PLAY ${n}</b>${n>1?'<button class="tiny danger remove">DELETE</button>':""}</div><div class="builder-grid"><label>PICK<input class="p-pick" placeholder="Over 9.5"></label><label>ODDS<input class="p-odds" placeholder="-120"></label><label>UNITS<input class="p-units" type="number" min=".5" step=".5" value="5"></label><label>MATCHUP<input class="p-match" placeholder="Yankees vs Red Sox"></label></div></div>`}
+ function render(){const old=[...document.querySelectorAll(".builder-row")].map(r=>({a:r.querySelector(".p-pick")?.value||"",b:r.querySelector(".p-odds")?.value||"",c:r.querySelector(".p-units")?.value||"5",d:r.querySelector(".p-match")?.value||""}));$("playRows").innerHTML=Array.from({length:count},(_,i)=>row(i+1)).join("");[...document.querySelectorAll(".builder-row")].forEach((r,i)=>{if(old[i]){r.querySelector(".p-pick").value=old[i].a;r.querySelector(".p-odds").value=old[i].b;r.querySelector(".p-units").value=old[i].c;r.querySelector(".p-match").value=old[i].d}});document.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{b.closest(".builder-row").remove();count=document.querySelectorAll(".builder-row").length;renum()})}
+ function renum(){[...document.querySelectorAll(".builder-row")].forEach((r,i)=>r.querySelector(".builder-head b").textContent=`● PLAY ${i+1}`)}
+ $("addPlay").onclick=()=>{count++;render()};render();
+ $("savePlay").onclick=async()=>{const sport=$("sport").value.trim(),live=$("isLive").value==="true",plays=[...document.querySelectorAll(".builder-row")].map(r=>({sport,matchup:r.querySelector(".p-match").value.trim(),pick_text:r.querySelector(".p-pick").value.trim(),odds:r.querySelector(".p-odds").value.trim(),units:Number(r.querySelector(".p-units").value||5)})).filter(x=>x.pick_text&&x.matchup&&x.odds);if(!plays.length){$("saveMsg").textContent="Complete at least one play.";return}$("saveMsg").textContent="Posting drop...";const{data:m}=await db.from("exclusive_current").select("id").order("id",{ascending:false}).limit(1);let id=(m?.[0]?.id||0)+1;const{error}=await db.from("exclusive_current").insert(plays.map(x=>({...x,id:id++,is_live:live,is_locked:true,is_settled:false,updated_at:new Date().toISOString()})));if(error){$("saveMsg").textContent=error.message;return}$("saveMsg").textContent=`Posted ${plays.length} play${plays.length>1?"s":""}.`;count=1;render();refresh()};
+ function pUnits(r){const u=Number(r.units||5),o=Number(r.odds);if(r.result==="LOSS")return-u;if(r.result==="PUSH")return 0;if(r.result==="WIN"&&Number.isFinite(o)&&o!==0)return o<0?u*100/Math.abs(o):u*o/100;return 0}function money(v){return`${v<0?"-":v>0?"+":""}$${Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:0})}`}
+ async function active(){const{data,error}=await db.from("exclusive_current").select("*").eq("is_settled",false).order("id");$("activeAdmin").innerHTML=error?`<div class="empty">${esc(error.message)}</div>`:data?.length?data.map(r=>`<article class="admin-drop"><div><small>${esc(r.sport)} · ${Number(r.units||5).toFixed(1)}U · ${r.is_live?"LIVE":"HIDDEN"}</small><b>${esc(r.pick_text)}</b><span>${esc(r.matchup)} · ${esc(r.odds)}</span></div><div class="actions"><button data-grade="WIN" data-id="${r.id}" class="tiny win">WIN</button><button data-grade="LOSS" data-id="${r.id}" class="tiny loss">LOSS</button><button data-grade="PUSH" data-id="${r.id}" class="tiny push">PUSH</button><button data-del-live="${r.id}" class="tiny danger">DELETE</button></div></article>`).join(""):`<div class="empty">No live drops.</div>`;document.querySelectorAll("[data-grade]").forEach(b=>b.onclick=()=>grade(+b.dataset.id,b.dataset.grade));document.querySelectorAll("[data-del-live]").forEach(b=>b.onclick=()=>delLive(+b.dataset.delLive))}
+ async function grade(id,result){if(!confirm(`Settle this drop as ${result}?`))return;const{data:r,error}=await db.from("exclusive_current").select("*").eq("id",id).single();if(error){$("gradeMsg").textContent=error.message;return}const{error:e}=await db.from("exclusive_results").insert({result,sport:r.sport,matchup:r.matchup,pick_text:r.pick_text,odds:r.odds,units:Number(r.units||5),created_at:new Date().toISOString()});if(e){$("gradeMsg").textContent=e.message;return}await db.from("exclusive_current").delete().eq("id",id);$("gradeMsg").textContent=`Settled as ${result}.`;refresh()}
+ async function delLive(id){if(!confirm("Delete this live drop? This cannot be undone."))return;const{error}=await db.from("exclusive_current").delete().eq("id",id);$("gradeMsg").textContent=error?error.message:"Live drop deleted.";refresh()}
+ async function history(){const{data,error}=await db.from("exclusive_results").select("*").order("created_at",{ascending:false});if(error){$("adminHistory").innerHTML=`<div class="empty">${esc(error.message)}</div>`;return}const a=data||[],total=a.reduce((s,r)=>s+Number(r.units||5),0),net=a.reduce((s,r)=>s+pUnits(r),0);$("adminProfit").textContent=money(net*UNIT);$("adminRoi").textContent=total?`${(net/total*100).toFixed(1)}%`:"0.0%";$("adminHistory").innerHTML=a.length?a.map(r=>{const u=pUnits(r);return`<article class="admin-drop"><div><small>${esc(r.sport)} · ${Number(r.units||5).toFixed(1)}U</small><b>${esc(r.pick_text)}</b><span>${esc(r.matchup)} · ${esc(r.odds)} · ${u>0?"+":""}${u.toFixed(2)}U · ${money(u*UNIT)}</span></div><div class="actions"><span class="result ${String(r.result).toLowerCase()}">${esc(r.result)}</span><button class="tiny danger" data-del-result="${r.id}">DELETE DROP</button></div></article>`}).join(""):`<div class="empty">No previous drops.</div>`;document.querySelectorAll("[data-del-result]").forEach(b=>b.onclick=()=>delResult(+b.dataset.delResult))}
+ async function delResult(id){if(!confirm("Permanently delete this previous drop? It will be removed from the public Receipts and all record/profit/ROI calculations."))return;const{error}=await db.from("exclusive_results").delete().eq("id",id);$("gradeMsg").textContent=error?error.message:"Previous drop deleted.";refresh()}
+ function refresh(){active();history()}boot();
 })();
