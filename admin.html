@@ -1,23 +1,64 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phantom Command Center</title><link rel="stylesheet" href="styles.css"><style>
-.admin{max-width:1100px;margin:auto}.admin h1{color:#e8ad17}.form{display:grid;grid-template-columns:1fr 2.2fr .8fr .8fr 1fr auto;gap:10px;background:#0b0b0c;border:1px solid #5f4917;padding:18px;border-radius:16px}.form input,.form select{background:#111;color:#fff;border:1px solid #333;padding:11px;border-radius:7px;min-width:0}.form button,.actions button{background:#e8ad17;border:0;padding:11px;border-radius:7px;font-weight:800}.admin table{margin-top:20px}.actions{display:flex;gap:5px;flex-wrap:wrap}.actions button{padding:6px 8px;font-size:10px}.danger{background:#6d1713!important;color:#fff}.helper{color:#aaa;font-size:12px;margin:10px 2px 0}.helper b{color:#e8ad17}@media(max-width:850px){.form{grid-template-columns:1fr 1fr}.admin table{min-width:850px}}</style></head><body><main class="admin"><h1>PHANTOM COMMAND CENTER</h1><p>Post, grade, edit or delete Exclusive Drops. Enter the American odds and profit is calculated automatically from the units.</p>
-<div class="form"><input id="date" placeholder="AUG 13"><input id="play" placeholder="Exact pick (e.g. Player O 22.5 PTS)"><input id="odds" type="number" placeholder="Odds -110"><input id="units" type="number" value="5" step=".5"><select id="result"><option>PENDING</option><option>WIN</option><option>LOSS</option><option>PUSH</option></select><button id="add">POST DROP</button></div>
-<p class="helper"><b>Auto math:</b> 1U = $2,000. Default 5U = $10,000 risk. Example: 5U at -116 winning = +$8,620.69. Loss = -$10,000. Push = $0.</p>
-<div class="table-wrap"><table><thead><tr><th>DATE</th><th>PLAY</th><th>ODDS</th><th>UNITS</th><th>RESULT</th><th>PROFIT</th><th>ACTIONS</th></tr></thead><tbody id="adminRows"></tbody></table></div><p><a href="index.html" style="color:#e8ad17">← Public View</a></p></main><script>
-const KEY='phantomExclusiveDrops_v2',UNIT_VALUE=2000;
-const seed=[
-{id:1,date:'AUG 13',play:'Exclusive Play',odds:null,units:5,result:'PENDING',profit:null},
-{id:2,date:'AUG 12',play:'Rockies vs Diamondbacks — Over 9.5 Runs',odds:-116,units:5,result:'WIN',profit:8620.69},
-{id:3,date:'AUG 11',play:'Cubs vs Nationals — Over 9.5 Runs',odds:-117,units:5,result:'WIN',profit:8547.01},
-{id:4,date:'AUG 10',play:'Braves vs Mets — Over 8.5 Runs',odds:-108,units:5,result:'WIN',profit:9259.26}
-];
-function get(){try{return JSON.parse(localStorage.getItem(KEY)||'null')||seed}catch{return seed}}
-function save(d){localStorage.setItem(KEY,JSON.stringify(d));render()}
-function calcProfit(result,units,odds){const risk=(Number(units)||5)*UNIT_VALUE;if(result==='PENDING')return null;if(result==='PUSH')return 0;if(result==='LOSS')return -risk;const o=Number(odds);if(!o)return null;return Math.round((o<0?risk*100/Math.abs(o):risk*o/100)*100)/100}
-function money(n){if(n===null||n===undefined)return '—';const v=Number(n);return `${v>0?'+':v<0?'-':''}$${Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`}
-function fmtOdds(o){if(o===null||o===undefined||o==='')return '—';const n=Number(o);return n>0?`+${n}`:`${n}`}
-function render(){adminRows.innerHTML=get().map((x,i)=>`<tr><td>${x.date}</td><td>${x.play}</td><td>${fmtOdds(x.odds)}</td><td>${x.units}U</td><td>${x.result}</td><td>${money(x.profit)}</td><td><div class=actions><button onclick="grade(${i},'WIN')">WIN</button><button onclick="grade(${i},'LOSS')">LOSS</button><button onclick="grade(${i},'PUSH')">PUSH</button><button onclick="editDrop(${i})">EDIT</button><button class=danger onclick="del(${i})">DELETE</button></div></td></tr>`).join('')}
-window.grade=(i,r)=>{let d=get(),x=d[i];if((!x.play||x.play==='Exclusive Play')&&r!=='PENDING'){const settled=prompt('Enter the exact settled pick so it appears publicly:','');if(settled===null)return;if(!settled.trim()){alert('Add the actual pick before settling this drop.');return;}x.play=settled.trim();}if(r==='WIN'&&!Number(x.odds)){const o=prompt('Enter the American odds for this play (example: -116):',x.odds??'');if(o===null)return;if(!Number(o)){alert('Odds are required to calculate winning profit.');return;}x.odds=Number(o)}x.result=r;x.profit=calcProfit(r,x.units,x.odds);save(d)};
-window.del=i=>{let d=get();if(confirm('Delete this drop?')){d.splice(i,1);save(d)}};
-window.editDrop=i=>{let d=get(),x=d[i];let p=prompt('Play',x.play);if(p===null)return;let o=prompt('American odds',x.odds??'');if(o===null)return;let u=prompt('Units',x.units);if(u===null)return;x.play=p.trim()||'Exclusive Play';x.odds=o===''?null:Number(o);x.units=Number(u)||x.units;x.profit=calcProfit(x.result,x.units,x.odds);save(d)};
-add.onclick=()=>{const r=result.value,u=Number(units.value)||5,o=odds.value===''?null:Number(odds.value),p=play.value.trim()||'Exclusive Play';if(r==='WIN'&&!o){alert('Enter the odds so profit can be calculated.');return;}let d=get();d.unshift({id:Date.now(),date:date.value||new Date().toLocaleDateString('en-US',{month:'short',day:'2-digit'}).toUpperCase(),play:p,odds:o,units:u,result:r,profit:calcProfit(r,u,o)});save(d);play.value='';odds.value='';result.value='PENDING'};
-render();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#050505" />
+  <title>Phantom Picks — Command Center</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="admin-page">
+  <header class="topbar shell">
+    <a class="brand" href="index.html"><img src="assets/phantom-logo.png" alt="Phantom Picks logo" /><div class="brand-text"><strong>PHANTOM</strong><span>PICKS</span></div></a>
+    <a class="outline-btn compact" href="index.html">PUBLIC VIEW</a>
+  </header>
+
+  <main class="shell admin-shell">
+    <section class="admin-panel panel">
+      <div class="admin-title"><div><span>⚙</span><div><h1>COMMAND CENTER <b>(ADMIN)</b></h1><p>Add &amp; settle exclusive plays. Profit is calculated automatically.</p></div></div></div>
+
+      <div class="admin-layout">
+        <nav class="admin-nav">
+          <button>⌂ &nbsp; DASHBOARD</button>
+          <button class="active">◉ &nbsp; ADD PLAY</button>
+          <button>↻ &nbsp; HISTORY</button>
+          <button>⚙ &nbsp; SETTINGS</button>
+        </nav>
+
+        <section class="admin-content">
+          <h2>ADD NEW EXCLUSIVE PLAY</h2>
+          <div class="form-grid">
+            <label>Matchup / Play<input id="playInput" placeholder="e.g. Lakers vs Nuggets — Over 228.5" /></label>
+            <label>Odds (American)<input id="oddsInput" type="number" placeholder="e.g. -116" /></label>
+            <label>Units<select id="unitsInput"><option value="5" selected>5U (Default)</option><option>0.5</option><option>1</option><option>1.5</option><option>2</option><option>2.5</option><option>3</option><option>3.5</option><option>4</option><option>4.5</option><option>5</option></select></label>
+            <label>Result (when settled)<select id="resultInput"><option value="PENDING">Pending</option><option value="WIN">Win</option><option value="LOSS">Loss</option><option value="PUSH">Push</option></select></label>
+            <label>Settle Date (when settled)<input id="dateInput" type="date" /></label>
+          </div>
+          <button id="addPlay" class="gold-btn">ADD PLAY</button>
+        </section>
+
+        <aside class="live-calc">
+          <h2>ODDS &amp; PROFIT CALCULATOR</h2>
+          <p><b>Risking:</b> <span id="riskPreview">5U ($10,000)</span></p>
+          <div class="calc-preview"><span>Odds</span><b id="oddsPreview">—</b></div>
+          <div class="preview-row win-text"><span>If WIN</span><b id="winPreview">—</b></div>
+          <div class="preview-row loss-text"><span>If LOSS</span><b id="lossPreview">-$10,000.00</b></div>
+          <div class="preview-row"><span>If PUSH</span><b>$0.00</b></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="admin-panel panel">
+      <div class="admin-history-head"><h2>EXCLUSIVE PLAY HISTORY</h2><p>Settle, edit, or delete any drop. Public results update immediately in this browser.</p></div>
+      <div id="adminRows" class="admin-history"></div>
+    </section>
+
+    <section class="guide-card panel">
+      <h2>PROFIT CALCULATION GUIDE</h2>
+      <div class="guide-grid"><div><b>POSITIVE ODDS</b><p>Profit = Risk × (Odds / 100)</p></div><div><b>NEGATIVE ODDS</b><p>Profit = Risk × (100 / |Odds|)</p></div><div><b>LOSS</b><p>Profit = -Risk amount</p></div><div><b>PUSH</b><p>Profit = $0</p></div></div>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

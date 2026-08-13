@@ -1,21 +1,36 @@
-# Phantom Picks — Exclusive Play Redesign
+# Phantom Picks — Exact Mockup Build
 
-Files:
-- `index.html` — public Exclusive Play landing page
-- `admin.html` — local Command Center demo (post / grade / edit / delete)
-- `styles.css` — responsive black/gold UI
-- `app.js` — ledger, record, profit and ROI calculations
-- `assets/phantom-character.png` — visual asset from the approved mockup
-- `design-reference.png` — approved visual reference
+This package rebuilds the approved black/gold Phantom Picks mockup as a functional responsive website.
 
-## Rules built into the presentation
-- Exclusive Play: $20
-- Standard sizing: 5U
-- 1U = $2,000 unless otherwise stated
-- Loss: buyer remains unlocked until an Exclusive Play wins
-- Push: next Exclusive Play is free
-- Win: access ends; next drop requires a new purchase
-- No refunds / all sales final
+## Files
+- `index.html` — public Exclusive Play page
+- `admin.html` — Command Center
+- `styles.css` — full responsive visual system
+- `app.js` — public history, filters, performance, Whop CTA placeholder
+- `admin.js` — add/edit/delete/settle plays and automatic American-odds profit calculation
+- `assets/` — Phantom logo and hero artwork used by the site
 
-## Important before production
-The included Command Center uses browser `localStorage`, so it is a functional front-end prototype and works on the same browser/device. For a live multi-device site, connect it to the existing Supabase/Auth backend and RLS setup. The Unlock button is intentionally not wired to a made-up checkout URL; connect it to the real Whop purchase/access flow before launch.
+## Betting math
+- Default play: **5U**
+- **1U = $2,000**
+- Default risk at 5U: **$10,000**
+- Positive American odds: `profit = risk × odds / 100`
+- Negative American odds: `profit = risk × 100 / abs(odds)`
+- Loss: `-risk`
+- Push: `$0`
+
+## Whop checkout
+Open `app.js` and paste the checkout URL here:
+
+```js
+const WHOP_CHECKOUT_URL='https://...';
+```
+
+Every public unlock action uses that variable.
+
+## Current seeded settled plays
+- Rockies vs Diamondbacks — Over 9.5 Runs — -116 — 5U — WIN — +$8,620.69
+- Cubs vs Nationals — Over 9.5 Runs — -117 — 5U — WIN — +$8,547.01
+- Braves vs Mets — Over 8.5 Runs — -108 — 5U — WIN — +$9,259.26
+
+The current pending play remains fully obscured on the public page.

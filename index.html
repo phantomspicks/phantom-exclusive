@@ -1,12 +1,120 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phantom Picks — Exclusive Play</title><link rel="stylesheet" href="styles.css"></head><body>
-<header><div class="brand"><div class="mark">P</div><div><b>PHANTOM</b><span>PICKS</span></div></div><div class="live"><i></i> LIVE DROP</div></header>
-<main>
-<section class="hero"><div class="copy"><div class="eyebrow">TODAY'S</div><h1>PHANTOM DROP</h1><p>ONE PLAY. MAX CONFIDENCE.</p>
-<div class="drop-card"><div class="card-title">🔒 &nbsp; EXCLUSIVE PLAY</div><div class="secret"><div class="blur-lines"><span></span><span></span><span></span></div><div class="lock">🔒</div><b>LOCKED</b></div><div class="units">★ &nbsp; 5 UNIT PLAY &nbsp; ★</div><div class="price"><strong>$20</strong> TO UNLOCK</div><button id="unlock">🔒 &nbsp; UNLOCK TODAY'S PLAY</button><small>No refunds. <a href="#terms">See terms.</a></small></div></div>
-<aside class="how"><h2>HOW IT WORKS</h2><div><em>↻</em><p><b>LOSE?</b><br>Stay unlocked until the next Exclusive Play wins.</p></div><div><em>Ⓟ</em><p><b>PUSH?</b><br>Get tomorrow's Exclusive Play FREE.</p></div><div><em>♛</em><p><b>WIN?</b><br>Access ends. Pay for the next drop.</p></div></aside>
-</section>
-<section class="performance"><h2>PHANTOM PERFORMANCE</h2><div class="metrics"><div><span>RECORD</span><strong id="record">0-0-0</strong><small id="winrate">WIN RATE: —</small></div><div><span>PROFIT</span><strong id="profit">$0</strong><small>ALL TIME</small></div><div><span>ROI</span><strong id="roi">0%</strong><small>ALL TIME</small></div></div></section>
-<section class="ledger"><div class="section-head"><h2>THE PHANTOM LEDGER</h2><button id="viewAll">VIEW ALL DROPS ›</button></div><div class="table-wrap"><table><thead><tr><th>DATE</th><th>PLAY</th><th>ODDS</th><th>UNITS</th><th>RESULT</th><th>PROFIT</th></tr></thead><tbody id="ledgerRows"></tbody></table></div><p class="foot">Each play is 5U. 1U = $2,000 unless otherwise stated.</p></section>
-<section class="features"><div>♢ <p><b>ELITE ANALYSIS</b><br>Data. Film. Edges.<br>All we do.</p></div><div>◎ <p><b>5 UNIT STANDARD</b><br>Every Exclusive Play<br>is 5U unless stated.</p></div><div>🔒 <p><b>EXCLUSIVE ACCESS</b><br>High conviction plays.<br>Limited access.</p></div><div>Ⓟ <p><b>PHANTOM PICKS</b><br>No face. No name.<br>Just wins.</p></div></section>
-<section id="terms" class="terms"><b>Exclusive Play Terms:</b> $20 per drop. A loss keeps access active until the next Exclusive Play wins. A push grants the next Exclusive Play free. A win ends access. All sales final.</section>
-</main><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#050505" />
+  <title>Phantom Picks — The Drop</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar shell">
+    <a class="brand" href="index.html" aria-label="Phantom Picks home">
+      <img src="assets/phantom-logo.png" alt="Phantom Picks logo" />
+      <div class="brand-text"><strong>PHANTOM</strong><span>PICKS</span></div>
+    </a>
+    <div class="live-pill"><i></i> LIVE DROP</div>
+  </header>
+
+  <main class="shell public-grid">
+    <section class="left-stack">
+      <section class="hero-panel panel">
+        <div class="hero-copy">
+          <div class="eyebrow">TODAY'S</div>
+          <h1><span>PHANTOM</span><b>DROP</b></h1>
+          <h2>ONE PLAY. MAX CONFIDENCE.</h2>
+          <p>This is the one. My highest conviction play of the day. Lock in.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true"></div>
+
+        <article class="locked-card" id="lockedCard">
+          <div class="card-kicker">🔒 &nbsp; EXCLUSIVE PLAY</div>
+          <div class="secret-window">
+            <div class="fake-pick" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="lock-medallion">🔒</div>
+            <strong>LOCKED</strong>
+            <small>Unlock to see today's exclusive play.</small>
+          </div>
+          <div class="purchase-meta">
+            <div><b>♟ &nbsp; 5 UNIT PLAY</b><small>1U = $2,000</small></div>
+            <div class="price"><strong>$20</strong><small>ONE TIME UNLOCK</small></div>
+            <div><b>♢ &nbsp; ACCESS RULES</b><small>See how it works below</small></div>
+          </div>
+          <button class="gold-btn" id="unlockBtn">🔒 &nbsp; UNLOCK TODAY'S PLAY — $20</button>
+          <small class="fineprint">No refunds. <a href="#terms">See terms.</a></small>
+        </article>
+      </section>
+
+      <section class="rules panel">
+        <h3>HOW IT WORKS</h3>
+        <div class="rule-grid">
+          <article><span>♕</span><b>WIN</b><p>If today's exclusive play wins, your access ends. You'll need to purchase the next one.</p></article>
+          <article><span>⊗</span><b>LOSS</b><p>If today's exclusive play loses, you get access to exclusive plays until one wins.</p></article>
+          <article><span>＝</span><b>PUSH</b><p>If today's play is a push, you get tomorrow's Exclusive Play for free.</p></article>
+          <article><span>▣</span><b>ONE TIME FEE</b><p>$20 to unlock today's exclusive play. No monthly commitment. No refunds.</p></article>
+        </div>
+      </section>
+    </section>
+
+    <aside class="right-stack">
+      <section class="history-panel panel">
+        <div class="history-head">
+          <h2>PREVIOUS EXCLUSIVE PLAYS</h2>
+          <div class="tabs" id="tabs">
+            <button class="active" data-filter="ALL">ALL</button>
+            <button data-filter="WIN">WINS</button>
+            <button data-filter="LOSS">LOSSES</button>
+            <button data-filter="PUSH">PUSHES</button>
+          </div>
+        </div>
+        <div id="historyRows" class="history-list"></div>
+        <button class="outline-btn" id="viewAll">VIEW ALL RESULTS &nbsp; ›</button>
+      </section>
+
+      <section class="calc-info panel">
+        <h3>UNIT SIZE &amp; CALCULATIONS</h3>
+        <div class="calc-cols">
+          <div><span>DEFAULT UNIT SIZE</span><strong>5U</strong><b>1U = $2,000</b><small>Default Risk: $10,000</small></div>
+          <div><span>PROFIT CALCULATION</span><p>Profit is calculated automatically from American odds.</p><button id="showGuide">View examples →</button></div>
+        </div>
+      </section>
+
+      <section class="performance panel">
+        <h3>PHANTOM PERFORMANCE</h3>
+        <div class="performance-grid">
+          <div><span>RECORD</span><strong id="record">0-0-0</strong></div>
+          <div><span>PROFIT</span><strong id="netProfit">$0.00</strong></div>
+          <div><span>ROI</span><strong id="roi">0.0%</strong></div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <section class="brand-strip">
+    <div class="shell strip-grid">
+      <div class="strip-logo"><img src="assets/phantom-logo.png" alt=""/><b>PHANTOM</b><span>PICKS</span></div>
+      <div>◎ <span>ONE PLAY.<br><b>MAX CONFIDENCE.</b></span></div>
+      <div>ϟ <span>HIGHEST CONVICTION<br><b>DAILY.</b></span></div>
+      <div>▥ <span>RESULTS SPEAK<br><b>FOR THEMSELVES.</b></span></div>
+      <div class="signature">Phantom</div>
+    </div>
+  </section>
+
+  <section id="terms" class="terms shell">
+    <b>Exclusive Play Terms:</b> Each Exclusive Play is a one-time $20 purchase. A loss keeps access active until an Exclusive Play wins. A push grants access to the next day's Exclusive Play at no additional charge. A win ends access. All sales are final; no refunds. Default wager sizing is 5U, with 1U = $2,000, unless otherwise stated.
+  </section>
+
+  <dialog id="guideDialog">
+    <button class="dialog-close" id="closeGuide">×</button>
+    <h2>PROFIT CALCULATION GUIDE</h2>
+    <h3>POSITIVE ODDS</h3><p>Profit = Risk × (Odds ÷ 100)</p><p>Example: 5U at +150 = $10,000 × 1.50 = <b>+$15,000</b></p>
+    <h3>NEGATIVE ODDS</h3><p>Profit = Risk × (100 ÷ |Odds|)</p><p>Example: 5U at -120 = $10,000 × (100 ÷ 120) = <b>+$8,333.33</b></p>
+    <h3>LOSS</h3><p>Profit = -Risk.</p>
+    <h3>PUSH</h3><p>Profit = $0.</p>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
