@@ -24,3 +24,23 @@
  .hero-copy{padding-top:44px;}
  .hero-img{width:112%;right:50%;transform:translateX(50%);bottom:-34px;max-height:470px;object-position:center top;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 9%,#000 75%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 9%,#000 75%,transparent 100%);mix-blend-mode:screen;}
 }
+
+/* MOBILE HERO COMPRESSION — keeps The Drop + Phantom together and brings plays above the fold */
+@media(max-width:720px){
+  .hero{min-height:500px;height:500px;}
+  .hero-copy{padding-top:30px;}
+  .hero-copy h1{font-size:68px;margin:16px 0 18px;}
+  .hero-copy p{margin-bottom:0;}
+  .hero-img{
+    width:74%;
+    right:50%;
+    transform:translateX(50%);
+    bottom:-18px;
+    max-height:255px;
+    object-fit:cover;
+    object-position:center 34%;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 8%,#000 80%,transparent 100%);
+    mask-image:linear-gradient(to bottom,transparent 0%,#000 8%,#000 80%,transparent 100%);
+  }
+  .drop-card{margin-top:-12px;}
+}
