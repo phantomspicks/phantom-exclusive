@@ -46,18 +46,14 @@ Do not delete the Aug 11 Cubs vs Nationals entry.
 Run the updated `supabase_schema.sql` once before deploying so the `units` column exists.
 
 
-## Approved Visual Rebuild
-This package keeps the working Site 3 backend/features but rebuilds the public and admin front end to match the approved flashy black/red Exclusive concept much more closely:
-- neon red energy / gold accents
-- hooded Phantom hero treatment
-- large heavily blurred locked-pick presentation
-- premium red/gold admin Command Center
-- multi-play posting
+## Pixel-match rebuild
+This version was rebuilt visually from scratch using the approved red mockup as the specification while preserving the working Site 3 backend:
+- Approved hooded Phantom hero extracted from the supplied reference
+- Red/black public page matching the mockup structure
+- Matching red/black Command Center
 - 5U default, 1U=$2,000
-- profit + ROI
-- per-play settlement
-- settled-play delete controls
-
-
-## Exact Phantom Character Fix
-Uses the hooded Phantom from the approved top-left red mockup as `phantom-hero-approved.jpg`.
+- Profit + ROI
+- Multiple plays
+- Per-play settlement
+- Delete controls
+- Heavy locked blur

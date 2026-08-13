@@ -7,86 +7,86 @@
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="admin-body">
-<section class="login-shell" id="loginView">
-  <div class="login-card premium">
-    <div class="brand-mark"><span>P</span></div>
-    <div class="login-title">EXCLUSIVE COMMAND CENTER</div>
-    <div class="login-sub">PHANTOM PICKS • OWNER ACCESS</div>
+<body class="admin-page">
+
+<section class="login-screen" id="loginView">
+  <div class="login-card">
+    <div class="round-p">P</div>
+    <h1>EXCLUSIVE COMMAND CENTER</h1>
+    <p>PHANTOM PICKS • OWNER ACCESS</p>
     <div class="field"><label>EMAIL</label><input id="loginEmail" type="email" autocomplete="username"></div>
     <div class="field"><label>PASSWORD</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
-    <button class="btn btn-primary" id="loginBtn" type="button">ENTER COMMAND CENTER</button>
-    <div class="login-error" id="loginMsg"></div>
+    <button class="admin-primary" id="loginBtn" type="button">ENTER COMMAND CENTER</button>
+    <div class="status-msg" id="loginMsg"></div>
   </div>
 </section>
 
-<main class="admin-shell hidden" id="adminView">
-  <header class="admin-topbar">
-    <div class="admin-lockup">
-      <div class="brand-mark"><span>P</span></div>
-      <div class="admin-title"><span>EXCLUSIVE</span> COMMAND CENTER</div>
+<main class="admin-wrap hidden" id="adminView">
+<header class="admin-header">
+  <div class="admin-lockup">
+    <div class="round-p">P</div>
+    <div class="admin-header-title"><span>EXCLUSIVE</span> COMMAND CENTER</div>
+  </div>
+  <button class="logout-btn" id="logoutBtn">LOGOUT</button>
+</header>
+
+<nav class="admin-tabs">
+  <button class="active">🚀 POST PLAY</button>
+  <button>🏆 SETTLEMENT</button>
+  <button>⚙ SETTINGS</button>
+  <button>👥 ACCESS LOG</button>
+</nav>
+
+<section class="admin-card">
+  <div class="admin-section-title">POST NEW EXCLUSIVE PLAY</div>
+  <div class="admin-two">
+    <div class="field"><label>SELECT SPORT</label><input id="sport" placeholder="MLB"></div>
+    <div class="field"><label>STATUS</label><select id="isLive"><option value="true">LIVE</option><option value="false">HIDDEN / DRAFT</option></select></div>
+  </div>
+  <div class="unit-banner">ALL EXCLUSIVE PLAYS DEFAULT TO <b>5U</b> • 1U = <b>$2,000</b> • OVERRIDE UNITS WHEN NEEDED</div>
+  <div id="playRows"></div>
+  <button class="add-play-btn" id="addPlay" type="button">＋ ADD ANOTHER PLAY</button>
+  <button class="post-play-btn" id="savePlay" type="button">POST EXCLUSIVE PLAY ⚡</button>
+  <div class="status-msg" id="saveMsg"></div>
+</section>
+
+<section class="admin-card">
+  <div class="admin-section-title gold">CURRENT EXCLUSIVE PLAYS</div>
+  <div id="activeAdmin" class="history-list"><div class="history-empty">Loading...</div></div>
+  <div class="status-msg" id="gradeMsg"></div>
+</section>
+
+<section class="admin-card">
+  <div class="admin-section-title gold">EXCLUSIVE PERFORMANCE</div>
+  <div class="admin-perf">
+    <div><small>NET PROFIT</small><strong id="adminProfit">$0</strong></div>
+    <div><small>ROI</small><strong id="adminRoi">0.0%</strong></div>
+    <div><small>UNIT VALUE</small><strong>$2,000</strong></div>
+    <div><small>DEFAULT PLAY</small><strong>5U</strong></div>
+  </div>
+</section>
+
+<section class="admin-card">
+  <div class="admin-section-title gold">PREVIOUS EXCLUSIVE PLAYS</div>
+  <div class="admin-note">Use DELETE only for an accidental/incorrect settled entry.</div>
+  <div id="adminHistory" class="history-list"></div>
+</section>
+
+<section class="admin-card">
+  <div class="admin-section-title gold">CUSTOMER LOCKED PREVIEW</div>
+  <div class="admin-preview">
+    <div class="admin-preview-blur">
+      <div>OVER 9.5 RUNS</div><div>YANKEES VS RED SOX</div><div>-120</div>
     </div>
-    <button class="logout-btn" id="logoutBtn">LOGOUT</button>
-  </header>
-
-  <nav class="admin-tabs">
-    <button class="active">🚀 POST PLAY</button>
-    <button>🏆 SETTLEMENT</button>
-    <button>⚙ SETTINGS</button>
-    <button>👥 ACCESS LOG</button>
-  </nav>
-
-  <section class="admin-panel featured">
-    <div class="panel-heading">POST NEW EXCLUSIVE PLAY</div>
-    <div class="form-top">
-      <div class="field"><label>SELECT SPORT</label><input id="sport" placeholder="MLB"></div>
-      <div class="field"><label>STATUS</label><select id="isLive"><option value="true">LIVE</option><option value="false">HIDDEN / DRAFT</option></select></div>
+    <div class="admin-preview-cover">
+      <div class="lock-ring"><span>🔒</span></div>
+      <strong>LOCKED</strong>
+      <small>Pick details are intentionally obscured.</small>
     </div>
-    <div class="default-note">ALL EXCLUSIVE PLAYS DEFAULT TO <b>5U</b> • 1U = <b>$2,000</b> • OVERRIDE UNITS WHEN NEEDED</div>
-    <div id="playRows"></div>
-    <button class="add-another" id="addPlay" type="button">＋ ADD ANOTHER PLAY</button>
-    <button class="post-exclusive" id="savePlay" type="button">POST EXCLUSIVE PLAY ⚡</button>
-    <div class="status-msg" id="saveMsg"></div>
-  </section>
-
-  <section class="admin-panel">
-    <div class="panel-heading gold">CURRENT EXCLUSIVE PLAYS</div>
-    <div id="activeAdmin" class="history-list"><div class="history-empty">Loading...</div></div>
-    <div class="status-msg" id="gradeMsg"></div>
-  </section>
-
-  <section class="admin-panel">
-    <div class="panel-heading gold">EXCLUSIVE PERFORMANCE</div>
-    <div class="performance-grid admin-perf">
-      <div><small>NET PROFIT</small><strong id="adminProfit">$0</strong></div>
-      <div><small>ROI</small><strong id="adminRoi">0.0%</strong></div>
-      <div><small>UNIT VALUE</small><strong>$2,000</strong></div>
-      <div><small>DEFAULT PLAY</small><strong>5U</strong></div>
-    </div>
-  </section>
-
-  <section class="admin-panel">
-    <div class="panel-heading gold">PREVIOUS EXCLUSIVE PLAYS</div>
-    <div class="admin-note">Use DELETE only for accidental/incorrect settled entries.</div>
-    <div class="history-list" id="adminHistory"></div>
-  </section>
-
-  <section class="admin-panel">
-    <div class="panel-heading gold">CUSTOMER LOCKED PREVIEW</div>
-    <div class="locked-preview">
-      <div class="blurred-pick-preview">
-        <div>OVER 9.5 RUNS</div>
-        <div>YANKEES VS RED SOX</div>
-        <div>-120</div>
-      </div>
-      <div class="lock-center">
-        <div class="lock-disc">🔒</div>
-        <strong>LOCKED</strong>
-        <span>Pick details are intentionally obscured.</span>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
 </main>
+
 <script src="config.js"></script>
 <script src="admin.js"></script>
 </body>

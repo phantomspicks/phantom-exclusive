@@ -29,8 +29,13 @@
    ]);
    const cp=document.getElementById("currentPlays");
    if(ce) cp.innerHTML=`<div class="history-empty">${esc(ce.message)}</div>`;
-   else if(current?.length){const es=document.getElementById("emptyState");if(es)es.classList.add("hidden");cp.innerHTML=current.map(lockedCard).join("");}
-   else {cp.innerHTML='';const es=document.getElementById("emptyState");if(es)es.classList.remove("hidden");}
+   else if(current?.length){
+     const es=document.getElementById("emptyState"); if(es)es.classList.add("hidden");
+     cp.innerHTML=current.map(lockedCard).join("");
+   } else {
+     cp.innerHTML="";
+     const es=document.getElementById("emptyState"); if(es)es.classList.remove("hidden");
+   }
    const safe=rows||[],w=safe.filter(x=>x.result==="WIN").length,l=safe.filter(x=>x.result==="LOSS").length,p=safe.filter(x=>x.result==="PUSH").length;
    wins.textContent=w;losses.textContent=l;pushes.textContent=p;winRate.textContent=(w+l)?Math.round(w/(w+l)*100)+"%":"0%";
    const totalUnits=safe.reduce((s,r)=>s+Number(r.units||5),0);

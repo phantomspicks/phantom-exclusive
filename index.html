@@ -7,81 +7,88 @@
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="public-body">
-<div class="ambient ambient-red"></div>
-<div class="ambient ambient-gold"></div>
-<main class="exclusive-shell">
-  <header class="exclusive-topbar">
-    <div class="brand-lockup">
-      <div class="brand-mark"><span>P</span></div>
-      <div>
-        <div class="brand-name">PHANTOM PICKS</div>
-        <div class="brand-sub">EXCLUSIVE</div>
-      </div>
-    </div>
-    <a class="top-unlock" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">UNLOCK $20</a>
-  </header>
+<body class="public-page">
+<main class="site-wrap">
 
-  <section class="exclusive-hero">
-    <div class="hero-copy">
-      <div class="eyebrow">TODAY'S</div>
-      <h1><span class="hero-exclusive">EXCLUSIVE</span><span class="hero-play">PLAY</span></h1>
-      <p>Our highest conviction.<br>Backed by data.<br>Driven by results.</p>
+<header class="public-header">
+  <div class="logo-lockup">
+    <div class="round-p">P</div>
+    <div class="logo-text">
+      <div class="logo-script">PHANTOM PICKS</div>
+      <div class="logo-sub">EXCLUSIVE</div>
     </div>
-    <div class="phantom-visual approved-phantom">
-      <div class="character-energy"></div>
-      <img src="phantom-hero-approved.jpg" class="approved-phantom-img" alt="Phantom Picks hooded character">
-    </div>
-  </section>
+  </div>
+  <nav class="public-nav">
+    <a class="active">EXCLUSIVE PLAY</a>
+    <a href="#results">RESULTS</a>
+  </nav>
+  <a class="top-cta" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">UNLOCK $20</a>
+</header>
 
-  <section class="locked-stage">
-    <div id="currentPlays" class="current-plays"></div>
-    <div id="emptyState" class="empty-live hidden">
-      <span class="pulse-dot"></span>
-      <strong>NO LIVE PLAY</strong>
-      <small>No Exclusive Play is live right now.</small>
-    </div>
-    <a class="main-unlock" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">
-      <span>🔒 UNLOCK NOW</span><b>$20</b>
-    </a>
-    <div class="terms">ONE-TIME PURCHASE • NO REFUNDS • LOSS/PUSH ROLLS ACCESS TO NEXT EXCLUSIVE PLAY</div>
-  </section>
+<section class="hero-grid">
+  <div class="hero-copy">
+    <div class="hero-small">TODAY'S</div>
+    <div class="hero-title red">EXCLUSIVE</div>
+    <div class="hero-title white">PLAY</div>
+    <p>Our highest conviction.<br>Backed by data.<br>Driven by results.</p>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-burst"></div>
+    <img src="phantom-approved-hero.jpg" alt="Phantom Picks hooded character" class="hero-character">
+  </div>
+</section>
 
-  <section class="benefits">
-    <div class="benefit"><div class="benefit-icon">⚡</div><b>ONE-TIME<br>PURCHASE</b></div>
-    <div class="benefit"><div class="benefit-icon">🛡</div><b>NO<br>REFUNDS</b></div>
-    <div class="benefit"><div class="benefit-icon">↻</div><b>LOSS/PUSH<br>ROLLS ACCESS</b></div>
-    <div class="benefit"><div class="benefit-icon">♛</div><b>PUSH = NEXT<br>PLAY FREE</b></div>
-  </section>
+<section class="locked-product" id="currentSection">
+  <div id="currentPlays" class="current-plays"></div>
+  <div id="emptyState" class="locked-empty hidden">
+    <div class="lock-ring"><span>🔒</span></div>
+    <strong>NO LIVE EXCLUSIVE PLAY</strong>
+    <small>Check back for the next drop.</small>
+  </div>
 
-  <section class="performance-wrap">
-    <div class="section-kicker">EXCLUSIVE PERFORMANCE</div>
-    <div class="record-line">
-      <div><small>RECORD</small><strong><span id="wins">0</span>-<span id="losses">0</span>-<span id="pushes">0</span></strong></div>
-      <div><small>WIN RATE</small><strong id="winRate">0%</strong></div>
-    </div>
-    <div class="performance-grid">
-      <div><small>NET PROFIT</small><strong id="netProfit">$0</strong></div>
-      <div><small>ROI</small><strong id="roi">0.0%</strong></div>
-      <div><small>UNIT VALUE</small><strong>$2,000</strong></div>
-      <div><small>DEFAULT PLAY</small><strong>5U</strong></div>
-    </div>
-  </section>
+  <a class="unlock-main" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">
+    <span>🔒 UNLOCK NOW • $20</span>
+  </a>
+  <div class="purchase-copy">ONE-TIME PURCHASE • NO REFUNDS</div>
+  <div class="rollover-copy">• LOSS/PUSH ROLLS ACCESS TO NEXT EXCLUSIVE PLAY</div>
+</section>
 
-  <section class="history-section">
-    <div class="section-title">PREVIOUS <span>EXCLUSIVE PLAYS</span></div>
-    <div class="section-sub">Documented. Verified. No exceptions.</div>
-    <div class="history-list" id="publicHistory"><div class="history-empty">No previous Exclusive Plays yet.</div></div>
-  </section>
+<section class="benefit-row">
+  <article><div class="benefit-icon">⚡</div><strong>ONE-TIME<br>PURCHASE</strong></article>
+  <article><div class="benefit-icon">🛡</div><strong>NO<br>REFUNDS</strong></article>
+  <article><div class="benefit-icon">↻</div><strong>LOSS/PUSH<br>ROLLS ACCESS</strong></article>
+  <article><div class="benefit-icon">♛</div><strong>PUSH = NEXT<br>PLAY FREE</strong></article>
+</section>
 
-  <section class="access-banner">
-    <div class="brand-mark small"><span>P</span></div>
-    <div class="access-copy">
-      <strong>ACCESS EXCLUSIVE PLAYS UNTIL WE WIN</strong>
-      <span>If we lose, you keep getting plays. If we push, next play is on us.</span>
+<section class="perf-bar">
+  <div><small>EXCLUSIVE RECORD</small><strong><span id="wins">0</span>-<span id="losses">0</span>-<span id="pushes">0</span></strong></div>
+  <div><small>WIN RATE</small><strong id="winRate">0%</strong></div>
+  <div><small>NET PROFIT</small><strong id="netProfit">$0</strong></div>
+  <div><small>ROI</small><strong id="roi">0.0%</strong></div>
+</section>
+<div class="unit-note">1U = $2,000 &nbsp; | &nbsp; DEFAULT PLAY = 5U ($10,000) &nbsp; | &nbsp; UNITS MAY VARY IF STATED</div>
+
+<section class="results-panel" id="results">
+  <div class="results-head">
+    <div>
+      <h2>PREVIOUS <span>EXCLUSIVE PLAYS</span></h2>
+      <p>Documented. Verified. No exceptions.</p>
     </div>
-    <a href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">UNLOCK TODAY • $20</a>
-  </section>
+  </div>
+  <div class="history-list" id="publicHistory">
+    <div class="history-empty">No previous Exclusive Plays yet.</div>
+  </div>
+</section>
+
+<section class="bottom-cta">
+  <div class="round-p small">P</div>
+  <div class="bottom-copy">
+    <strong>ACCESS EXCLUSIVE PLAYS <span>UNTIL WE WIN</span></strong>
+    <p>If we lose, you keep getting plays. If we push, next play is on us.</p>
+  </div>
+  <a href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener">🔒 UNLOCK TODAY • $20</a>
+</section>
+
 </main>
 <script src="config.js"></script>
 <script src="app.js"></script>
