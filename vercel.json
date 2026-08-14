@@ -16,7 +16,7 @@
   ],
   "headers": [
     {
-      "source": "/api/(.*)",
+      "source": "/admin.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -25,29 +25,11 @@
       ]
     },
     {
-      "source": "/admin",
+      "source": "/api/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/admin.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/admin.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate"
+          "value": "no-store"
         }
       ]
     }

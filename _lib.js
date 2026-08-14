@@ -8,39 +8,17 @@ const seed = [
   {id:4,createdAt:'2026-08-10T12:00:00Z',settledAt:'2026-08-10T23:00:00Z',date:'2026-08-10',play:'Braves vs Mets',detail:'Over 8.5 Runs',odds:-108,units:5,result:'WIN',profit:9259.26}
 ];
 
-function cleanEnvValue(value){
-  if(value == null) return '';
-  let v=String(value).trim();
-  if((v.startsWith('\"')&&v.endsWith('\"'))||(v.startsWith("'")&&v.endsWith("'"))) v=v.slice(1,-1).trim();
-  return v;
-}
-function env(name, alt){ return cleanEnvValue(process.env[name] || (alt ? process.env[alt] : '')); }
+function env(name, alt){ return process.env[name] || (alt ? process.env[alt] : undefined); }
 function redisConfig(){
-  let url=env('UPSTASH_REDIS_REST_URL','KV_REST_API_URL');
-  const token=env('UPSTASH_REDIS_REST_TOKEN','KV_REST_API_TOKEN');
-  if(url && !/^https?:\/\//i.test(url) && /^[A-Za-z0-9.-]+(?::\d+)?(?:\/.*)?$/.test(url)) url=`https://${url}`;
-  return {url,token};
+  return {url: env('UPSTASH_REDIS_REST_URL','KV_REST_API_URL'), token: env('UPSTASH_REDIS_REST_TOKEN','KV_REST_API_TOKEN')};
 }
 function redisReady(){ const {url,token}=redisConfig(); return !!(url&&token); }
-function validatedRedisConfig(){
-  const {url,token}=redisConfig();
-  if(!url||!token) throw new Error('Server storage is not configured. In Vercel, connect Upstash Redis and redeploy.');
-  let parsed;
-  try{ parsed=new URL(url); }catch{ throw new Error('Your Upstash REST URL is invalid. Use UPSTASH_REDIS_REST_URL or KV_REST_API_URL from the Vercel/Upstash integration — not a redis:// or rediss:// connection string.'); }
-  if(!['http:','https:'].includes(parsed.protocol)) throw new Error('Your Upstash storage URL must be the REST URL beginning with https:// — not a redis:// or rediss:// URL.');
-  return {url:parsed.toString().replace(/\/$/,''),token};
-}
 async function redis(command){
-  const {url,token}=validatedRedisConfig();
-  let r;
-  try{
-    r=await fetch(url,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(command)});
-  }catch(e){
-    throw new Error(`Could not connect to Upstash Redis. Check the REST URL in Vercel Environment Variables, then redeploy. (${e?.message||'connection error'})`);
-  }
-  let data;
-  try{ data=await r.json(); }catch{ throw new Error(`Upstash returned an unreadable response (${r.status}). Check the REST URL and token.`); }
-  if(!r.ok||data.error) throw new Error(data.error||`Upstash Redis error ${r.status}`);
+  const {url,token}=redisConfig();
+  if(!url||!token) throw new Error('Redis is not configured');
+  const r=await fetch(url,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(command)});
+  const data=await r.json();
+  if(!r.ok||data.error) throw new Error(data.error||`Redis ${r.status}`);
   return data.result;
 }
 async function getDrops(){
