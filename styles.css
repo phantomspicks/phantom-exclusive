@@ -107,3 +107,4 @@
 .login-card input:focus{border-color:#b58a3d;box-shadow:0 0 0 3px rgba(181,138,61,.12)}
 .login-card .gold-btn{margin-top:5px;width:100%}
 .login-error{min-height:20px;text-align:center;color:#ff7777;font-size:13px}
+.login-form{display:grid;gap:14px}
