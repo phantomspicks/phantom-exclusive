@@ -161,6 +161,7 @@
 'use strict';
 
 var STORAGE_KEY='phantomExclusiveDrops_v5';
+var DELETED_KEY='phantomExclusiveDeleted_v1';
 var UNIT_VALUE=2000;
 var SEED_DROPS=[
   {id:'seed-20260812',createdAt:'2026-08-12T12:00:00Z',settledAt:'2026-08-12T23:00:00Z',date:'2026-08-12',play:'Rockies vs Diamondbacks',detail:'Over 9.5 Runs',odds:-116,units:5,result:'WIN',profit:8620.69},
@@ -171,6 +172,15 @@ var drops=[];
 
 function byId(id){return document.getElementById(id)}
 function copy(x){return JSON.parse(JSON.stringify(x))}
+function readDeleted(){
+  try{
+    var x=JSON.parse(localStorage.getItem(DELETED_KEY)||'[]');
+    return Array.isArray(x)?x:[];
+  }catch(e){return []}
+}
+function saveDeleted(ids){
+  try{localStorage.setItem(DELETED_KEY,JSON.stringify(ids||[]))}catch(e){}
+}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function money(n){if(n==null)return '—';var v=Number(n);return (v>0?'+':v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function oddsText(o){if(o==null||o==='')return '—';var n=Number(o);return n>0?'+'+n:String(n)}
@@ -186,9 +196,16 @@ function loadLocal(){
     }catch(e){}
   });
 
-  var all=SEED_DROPS.map(function(x){return copy(x)}).concat(combined);
-  var bySignature={};
+  var deleted=readDeleted();
+  var deletedSet={};
+  deleted.forEach(function(id){deletedSet[String(id)]=true});
 
+  var all=SEED_DROPS
+    .filter(function(x){return !deletedSet[String(x.id)]})
+    .map(function(x){return copy(x)})
+    .concat(combined.filter(function(x){return x && !deletedSet[String(x.id)]}));
+
+  var bySignature={};
   all.forEach(function(x){
     if(!x) return;
     var sig=[
@@ -336,7 +353,18 @@ window.phantomEdit=function(event,id){
 window.phantomDelete=function(event,id){
   if(event){event.preventDefault();event.stopPropagation()}
   if(!confirm('Delete this Exclusive Play?'))return false;
-  drops=drops.filter(function(x){return String(x.id)!==String(id)});saveLocal();render();syncAll();return false;
+
+  var deleted=readDeleted();
+  if(deleted.map(String).indexOf(String(id))===-1){
+    deleted.push(String(id));
+    saveDeleted(deleted);
+  }
+
+  drops=drops.filter(function(x){return String(x.id)!==String(id)});
+  saveLocal();
+  render();
+  syncAll();
+  return false;
 };
 
 function init(){
