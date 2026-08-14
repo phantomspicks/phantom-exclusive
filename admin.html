@@ -180,16 +180,47 @@ function calc(result,units,odds){var risk=(Number(units)||5)*UNIT_VALUE;if(resul
 function loadLocal(){
   var combined=[];
   ['phantomExclusiveDrops_v5','phantomExclusiveDrops_v4','phantomExclusiveDrops_v3'].forEach(function(k){
-    try{var x=JSON.parse(localStorage.getItem(k)||'null');if(Array.isArray(x))combined=combined.concat(x)}catch(e){}
+    try{
+      var x=JSON.parse(localStorage.getItem(k)||'null');
+      if(Array.isArray(x)) combined=combined.concat(x);
+    }catch(e){}
   });
-  var map={};
-  SEED_DROPS.forEach(function(x){map[String(x.id)]=copy(x)});
-  combined.forEach(function(x){if(x&&x.id!=null)map[String(x.id)]=x});
-  return Object.keys(map).map(function(k){return map[k]}).sort(function(a,b){
-    return String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||''));
+
+  var all=SEED_DROPS.map(function(x){return copy(x)}).concat(combined);
+  var bySignature={};
+
+  all.forEach(function(x){
+    if(!x) return;
+    var sig=[
+      String(x.date||'').trim().toLowerCase(),
+      String(x.play||'').trim().toLowerCase(),
+      String(x.detail||'').trim().toLowerCase(),
+      String(x.odds==null?'':x.odds).trim()
+    ].join('|');
+
+    if(!bySignature[sig]){
+      bySignature[sig]=x;
+    }else{
+      var old=bySignature[sig];
+      var oldTime=String(old.createdAt||old.date||'');
+      var newTime=String(x.createdAt||x.date||'');
+      if(newTime>oldTime) bySignature[sig]=x;
+    }
   });
+
+  return Object.keys(bySignature)
+    .map(function(k){return bySignature[k]})
+    .sort(function(a,b){
+      return String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||''));
+    });
 }
-function saveLocal(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(drops))}catch(e){}}
+function saveLocal(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(drops));
+    localStorage.removeItem('phantomExclusiveDrops_v4');
+    localStorage.removeItem('phantomExclusiveDrops_v3');
+  }catch(e){}
+}
 
 function render(){
   var rows=byId('adminRows'); if(!rows)return;
@@ -227,12 +258,26 @@ function setStatus(ok,msg){
 async function api(method,body){
   var opt={method:method||'GET',cache:'no-store',headers:{}};
   if(body){opt.headers['Content-Type']='application/json';opt.body=JSON.stringify(body)}
-  var r=await fetch('/api/admin-drops',opt);
-  var text=await r.text();
-  var data={};
-  try{data=JSON.parse(text)}catch(e){}
-  if(!r.ok)throw new Error((data&&data.error)||('HTTP '+r.status));
-  return data;
+  var endpoints=['/api/admin-drops','/api/admin'];
+  var lastError=null;
+
+  for(var i=0;i<endpoints.length;i++){
+    try{
+      var r=await fetch(endpoints[i],opt);
+      var text=await r.text();
+      var data={};
+      try{data=JSON.parse(text)}catch(e){}
+      if(r.status===404){
+        lastError=new Error('HTTP 404');
+        continue;
+      }
+      if(!r.ok)throw new Error((data&&data.error)||('HTTP '+r.status));
+      return data;
+    }catch(e){
+      lastError=e;
+    }
+  }
+  throw lastError||new Error('API unavailable');
 }
 async function checkServer(){
   try{
