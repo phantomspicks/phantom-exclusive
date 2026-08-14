@@ -52,7 +52,7 @@
             <label>Result (when settled)<select id="resultInput"><option value="PENDING">Pending</option><option value="WIN">Win</option><option value="LOSS">Loss</option><option value="PUSH">Push</option></select></label>
             <label>Settle Date (when settled)<input id="dateInput" type="date" /></label>
           </div>
-          <button id="addPlay" type="button" class="gold-btn">ADD PLAY</button>
+          <button id="addPlay" type="button" class="gold-btn" onclick="return phantomAddPick(event)">ADD PLAY</button>
         </section>
 
         <aside class="live-calc">
@@ -68,7 +68,12 @@
 
     <section class="admin-panel panel">
       <div class="admin-history-head"><h2>EXCLUSIVE PLAY HISTORY</h2><p>Settle, edit, or delete any drop. Public results update immediately in this browser.</p></div>
-      <div id="adminRows" class="admin-history"></div>
+      <div id="serverStatus" style="margin:0 0 14px;padding:10px 12px;border:1px solid #3a3a40;border-radius:10px;background:#101014;color:#aaa;font-size:12px;font-weight:800;letter-spacing:.05em">CHECKING SERVER…</div>
+      <div id="adminRows" class="admin-history">
+        <article class="admin-row"><div class="meta"><strong>Rockies vs Diamondbacks — Over 9.5 Runs</strong><small>2026-08-12 • WIN • +$8,620.69</small></div><div class="odds">-116</div><div class="units">5U</div><div><span class="badge win">WIN</span></div><div class="actions"></div></article>
+        <article class="admin-row"><div class="meta"><strong>Cubs vs Nationals — Over 9.5 Runs</strong><small>2026-08-11 • WIN • +$8,547.01</small></div><div class="odds">-117</div><div class="units">5U</div><div><span class="badge win">WIN</span></div><div class="actions"></div></article>
+        <article class="admin-row"><div class="meta"><strong>Braves vs Mets — Over 8.5 Runs</strong><small>2026-08-10 • WIN • +$9,259.26</small></div><div class="odds">-108</div><div class="units">5U</div><div><span class="badge win">WIN</span></div><div class="actions"></div></article>
+      </div>
     </section>
 
     <section class="guide-card panel">
@@ -151,6 +156,154 @@
 })();
 </script>
 
-  <script src="admin.js?v=ADMIN-REBUILD-20260814-1329"></script>
+<script>
+(function(){
+'use strict';
+
+var STORAGE_KEY='phantomExclusiveDrops_v5';
+var UNIT_VALUE=2000;
+var SEED_DROPS=[
+  {id:'seed-20260812',createdAt:'2026-08-12T12:00:00Z',settledAt:'2026-08-12T23:00:00Z',date:'2026-08-12',play:'Rockies vs Diamondbacks',detail:'Over 9.5 Runs',odds:-116,units:5,result:'WIN',profit:8620.69},
+  {id:'seed-20260811',createdAt:'2026-08-11T12:00:00Z',settledAt:'2026-08-11T23:00:00Z',date:'2026-08-11',play:'Cubs vs Nationals',detail:'Over 9.5 Runs',odds:-117,units:5,result:'WIN',profit:8547.01},
+  {id:'seed-20260810',createdAt:'2026-08-10T12:00:00Z',settledAt:'2026-08-10T23:00:00Z',date:'2026-08-10',play:'Braves vs Mets',detail:'Over 8.5 Runs',odds:-108,units:5,result:'WIN',profit:9259.26}
+];
+var drops=[];
+
+function byId(id){return document.getElementById(id)}
+function copy(x){return JSON.parse(JSON.stringify(x))}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function money(n){if(n==null)return '—';var v=Number(n);return (v>0?'+':v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function oddsText(o){if(o==null||o==='')return '—';var n=Number(o);return n>0?'+'+n:String(n)}
+function splitPlay(raw){var parts=String(raw||'').split(/\s+[—-]\s+/);return {play:(parts.shift()||'Exclusive Play').trim(),detail:parts.join(' — ').trim()}}
+function calc(result,units,odds){var risk=(Number(units)||5)*UNIT_VALUE;if(result==='PENDING')return null;if(result==='PUSH')return 0;if(result==='LOSS')return -risk;var o=Number(odds);if(!o)return null;return Math.round((o<0?risk*100/Math.abs(o):risk*o/100)*100)/100}
+
+function loadLocal(){
+  var combined=[];
+  ['phantomExclusiveDrops_v5','phantomExclusiveDrops_v4','phantomExclusiveDrops_v3'].forEach(function(k){
+    try{var x=JSON.parse(localStorage.getItem(k)||'null');if(Array.isArray(x))combined=combined.concat(x)}catch(e){}
+  });
+  var map={};
+  SEED_DROPS.forEach(function(x){map[String(x.id)]=copy(x)});
+  combined.forEach(function(x){if(x&&x.id!=null)map[String(x.id)]=x});
+  return Object.keys(map).map(function(k){return map[k]}).sort(function(a,b){
+    return String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||''));
+  });
+}
+function saveLocal(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(drops))}catch(e){}}
+
+function render(){
+  var rows=byId('adminRows'); if(!rows)return;
+  rows.innerHTML=drops.map(function(x){
+    return '<article class="admin-row">'+
+      '<div class="meta"><strong>'+esc(x.play)+(x.detail?' — '+esc(x.detail):'')+'</strong><small>'+esc(x.date||'')+' • '+esc(x.result||'PENDING')+' • '+money(x.profit)+'</small></div>'+
+      '<div class="odds">'+oddsText(x.odds)+'</div>'+
+      '<div class="units">'+(Number(x.units)||5)+'U</div>'+
+      '<div><span class="badge '+String(x.result||'PENDING').toLowerCase()+'">'+esc(x.result||'PENDING')+'</span></div>'+
+      '<div class="actions">'+
+        '<button type="button" onclick="return phantomSettle(event,\''+esc(x.id)+'\',\'WIN\')">WIN</button>'+
+        '<button type="button" onclick="return phantomSettle(event,\''+esc(x.id)+'\',\'LOSS\')">LOSS</button>'+
+        '<button type="button" onclick="return phantomSettle(event,\''+esc(x.id)+'\',\'PUSH\')">PUSH</button>'+
+        '<button type="button" onclick="return phantomEdit(event,\''+esc(x.id)+'\')">EDIT</button>'+
+        '<button type="button" class="del" onclick="return phantomDelete(event,\''+esc(x.id)+'\')">DELETE</button>'+
+      '</div></article>';
+  }).join('');
+}
+
+function preview(){
+  var uEl=byId('unitsInput'),oEl=byId('oddsInput'); if(!uEl||!oEl)return;
+  var u=Number(uEl.value)||5,o=Number(oEl.value),risk=u*UNIT_VALUE;
+  if(byId('riskPreview'))byId('riskPreview').textContent=u+'U ($'+risk.toLocaleString()+')';
+  if(byId('oddsPreview'))byId('oddsPreview').textContent=oEl.value?oddsText(o):'—';
+  if(byId('winPreview'))byId('winPreview').textContent=o?money(calc('WIN',u,o)):'—';
+  if(byId('lossPreview'))byId('lossPreview').textContent=money(-risk);
+}
+function setStatus(ok,msg){
+  var s=byId('serverStatus'); if(!s)return;
+  s.textContent=ok?'SERVER CONNECTED — PICKS PUBLISH PUBLICLY':'LOCAL ONLY — '+(msg||'SERVER API NOT REACHABLE');
+  s.style.borderColor=ok?'#2f7d4b':'#7d3f3f';
+  s.style.color=ok?'#70d99a':'#ff8989';
+}
+
+async function api(method,body){
+  var opt={method:method||'GET',cache:'no-store',headers:{}};
+  if(body){opt.headers['Content-Type']='application/json';opt.body=JSON.stringify(body)}
+  var r=await fetch('/api/admin-drops',opt);
+  var text=await r.text();
+  var data={};
+  try{data=JSON.parse(text)}catch(e){}
+  if(!r.ok)throw new Error((data&&data.error)||('HTTP '+r.status));
+  return data;
+}
+async function checkServer(){
+  try{
+    var data=await api('GET');
+    setStatus(true);
+    if(data&&Array.isArray(data.drops)&&data.drops.length){
+      var map={};
+      SEED_DROPS.forEach(function(x){map[String(x.id)]=copy(x)});
+      data.drops.forEach(function(x){map[String(x.id)]=x});
+      drops.forEach(function(x){map[String(x.id)]=x});
+      drops=Object.keys(map).map(function(k){return map[k]}).sort(function(a,b){return String(b.createdAt||b.date||'').localeCompare(String(a.createdAt||a.date||''))});
+      saveLocal();render();
+    }
+  }catch(e){setStatus(false,e.message)}
+}
+async function syncAll(){
+  try{
+    var data=await api('POST',{action:'replaceAll',drops:drops});
+    setStatus(true);
+    if(data&&Array.isArray(data.drops)){drops=data.drops;saveLocal();render()}
+    return true;
+  }catch(e){setStatus(false,e.message);return false}
+}
+
+window.phantomAddPick=function(event){
+  if(event){event.preventDefault();event.stopPropagation()}
+  var p=byId('playInput'),o=byId('oddsInput'),u=byId('unitsInput'),r=byId('resultInput'),d=byId('dateInput');
+  if(!p||!o||!u||!r||!d){alert('Command Center form did not initialize.');return false}
+  var raw=String(p.value||'').trim();
+  if(!raw){alert('Enter the actual play first.');p.focus();return false}
+  var result=r.value||'PENDING',units=Number(u.value)||5,odds=o.value===''?null:Number(o.value);
+  if(result==='WIN'&&!odds){alert('Odds are required for a winning pick.');o.focus();return false}
+  var sp=splitPlay(raw),now=new Date().toISOString();
+  drops.unshift({id:'local-'+Date.now(),createdAt:now,settledAt:result!=='PENDING'?now:null,date:d.value||now.slice(0,10),play:sp.play,detail:sp.detail,odds:odds,units:units,result:result,profit:calc(result,units,odds)});
+  saveLocal();render();
+  p.value='';o.value='';r.value='PENDING';d.value='';preview();
+  syncAll();
+  return false;
+};
+window.phantomSettle=function(event,id,result){
+  if(event){event.preventDefault();event.stopPropagation()}
+  var x=drops.find(function(v){return String(v.id)===String(id)});if(!x)return false;
+  if(result==='WIN'&&!Number(x.odds)){var o=prompt('Enter American odds (example -116):',x.odds||'');if(o===null)return false;if(!Number(o)){alert('Odds are required.');return false}x.odds=Number(o)}
+  x.result=result;x.settledAt=new Date().toISOString();x.date=new Date().toISOString().slice(0,10);x.profit=calc(result,x.units,x.odds);
+  saveLocal();render();syncAll();return false;
+};
+window.phantomEdit=function(event,id){
+  if(event){event.preventDefault();event.stopPropagation()}
+  var x=drops.find(function(v){return String(v.id)===String(id)});if(!x)return false;
+  var raw=prompt('Play / matchup',x.play+(x.detail?' — '+x.detail:''));if(raw===null)return false;
+  var o=prompt('American odds',x.odds==null?'':x.odds);if(o===null)return false;
+  var u=prompt('Units',x.units);if(u===null)return false;
+  var sp=splitPlay(raw);x.play=sp.play;x.detail=sp.detail;x.odds=o===''?null:Number(o);x.units=Number(u)||5;x.profit=calc(x.result,x.units,x.odds);
+  saveLocal();render();syncAll();return false;
+};
+window.phantomDelete=function(event,id){
+  if(event){event.preventDefault();event.stopPropagation()}
+  if(!confirm('Delete this Exclusive Play?'))return false;
+  drops=drops.filter(function(x){return String(x.id)!==String(id)});saveLocal();render();syncAll();return false;
+};
+
+function init(){
+  drops=loadLocal();saveLocal();render();preview();
+  var oi=byId('oddsInput'),ui=byId('unitsInput');
+  if(oi)oi.oninput=preview;if(ui)ui.onchange=preview;
+  checkServer();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+else init();
+})();
+</script>
+
 </body>
 </html>
