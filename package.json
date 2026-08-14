@@ -1,1 +1,8 @@
-{"name":"phantom-exclusive","private":true,"version":"4.0.0"}
+{
+  "name": "phantom-exclusive",
+  "private": true,
+  "version": "4.1.0",
+  "engines": {
+    "node": "22.x"
+  }
+}
