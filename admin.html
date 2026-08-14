@@ -21,7 +21,7 @@
         <label>Password
           <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" />
         </label>
-        <button id="loginButton" type="button" class="gold-btn">ENTER COMMAND CENTER</button>
+        <button id="loginButton" type="button" class="gold-btn" onclick="return phantomLogin(event)">ENTER COMMAND CENTER</button>
         <div id="loginError" class="login-error" aria-live="polite"></div>
       </div>
     </div>
@@ -77,6 +77,80 @@
     </section>
   </main>
 
-  <script src="admin.js?v=NO-LOGIN-RELOAD-20260814"></script>
+  
+<script>
+(function () {
+  window.phantomLogin = function (event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    var userEl = document.getElementById('loginUsername');
+    var passEl = document.getElementById('loginPassword');
+    var gate = document.getElementById('loginGate');
+    var err = document.getElementById('loginError');
+
+    if (!userEl || !passEl || !gate || !err) {
+      alert('Login screen did not initialize correctly.');
+      return false;
+    }
+
+    var username = String(userEl.value || '').trim().toLowerCase();
+    var password = String(passEl.value || '');
+
+    if (username === 'phantom' && password === 'PhantomPicks2026!') {
+      try {
+        sessionStorage.setItem('phantomCommandCenterLoggedIn_v1', 'yes');
+      } catch (e) {}
+      gate.style.display = 'none';
+      gate.classList.add('is-hidden');
+      passEl.value = '';
+      return false;
+    }
+
+    err.textContent = 'Incorrect username or password.';
+    passEl.value = '';
+    passEl.focus();
+    return false;
+  };
+
+  window.phantomLogout = function (event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    try {
+      sessionStorage.removeItem('phantomCommandCenterLoggedIn_v1');
+    } catch (e) {}
+    var gate = document.getElementById('loginGate');
+    if (gate) {
+      gate.style.display = 'flex';
+      gate.classList.remove('is-hidden');
+    }
+    return false;
+  };
+
+  function restoreLoginState() {
+    try {
+      if (sessionStorage.getItem('phantomCommandCenterLoggedIn_v1') === 'yes') {
+        var gate = document.getElementById('loginGate');
+        if (gate) {
+          gate.style.display = 'none';
+          gate.classList.add('is-hidden');
+        }
+      }
+    } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', restoreLoginState);
+  } else {
+    restoreLoginState();
+  }
+})();
+</script>
+
+  <script src="admin.js?v=INLINE-LOGIN-FIX-20260814"></script>
 </body>
 </html>
