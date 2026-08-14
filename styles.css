@@ -68,3 +68,42 @@
 .locked-card{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;margin:120px 34px 28px!important;z-index:4!important}
 @media(max-width:900px){.hero-panel{min-height:0!important}.locked-card{margin-top:110px!important}}
 @media(max-width:600px){.hero-panel{min-height:0!important}.hero-copy{padding:38px 20px 0!important;width:88%!important}.locked-card{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;margin:115px 12px 12px!important}}
+/* Command Center login gate */
+.login-gate{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(194,155,74,.16), transparent 35%),
+    rgba(4,4,5,.98);
+  backdrop-filter: blur(16px);
+}
+.login-gate.is-hidden{display:none}
+.login-card{
+  width:min(440px,100%);
+  padding:34px 28px;
+  border:1px solid rgba(213,176,92,.48);
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(24,24,27,.98),rgba(8,8,10,.98));
+  box-shadow:0 30px 90px rgba(0,0,0,.65), inset 0 1px rgba(255,255,255,.04);
+}
+.login-mark{
+  width:62px;height:62px;border-radius:50%;display:grid;place-items:center;
+  margin:0 auto 18px;
+  border:1px solid rgba(219,181,93,.7);
+  color:#e4c16f;font-weight:900;font-size:32px;
+  box-shadow:0 0 32px rgba(201,159,61,.16);
+}
+.login-card .eyebrow{text-align:center;color:#c79d48;font-size:11px;letter-spacing:.22em;font-weight:800}
+.login-card h1{text-align:center;margin:7px 0 6px;font-size:29px;letter-spacing:.04em}
+.login-sub{text-align:center;color:#999;margin:0 0 25px}
+.login-card form{display:grid;gap:14px}
+.login-card label{display:grid;gap:7px;color:#bdbdbd;font-size:12px;font-weight:700;letter-spacing:.04em}
+.login-card input{
+  width:100%; box-sizing:border-box; padding:14px 15px;
+  border-radius:11px;border:1px solid #313136;background:#101013;color:#fff;
+  outline:none;font-size:16px;
+}
+.login-card input:focus{border-color:#b58a3d;box-shadow:0 0 0 3px rgba(181,138,61,.12)}
+.login-card .gold-btn{margin-top:5px;width:100%}
+.login-error{min-height:20px;text-align:center;color:#ff7777;font-size:13px}
