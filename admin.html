@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Phantom Picks — Exclusive Command Center</title>
+  <title>Phantom Picks — Phantom Drop Command Center</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -25,7 +25,7 @@
 
   <main class="admin-wrap hidden" id="adminView">
     <header class="admin-head">
-      <div><div class="admin-title">COMMAND CENTER</div><div class="admin-sub">PHANTOM PICKS • EXCLUSIVE PLAY</div></div>
+      <div><div class="admin-title">COMMAND CENTER</div><div class="admin-sub">PHANTOM PICKS • PHANTOM DROP</div></div>
       <button class="btn btn-dark logout" id="logoutBtn">LOG OUT</button>
     </header>
 
@@ -33,8 +33,8 @@
       <div class="submission-left">
         <span class="submission-dot" id="submissionDot"></span>
         <div>
-          <div class="submission-title" id="submissionTitle">NO PLAY SUBMITTED</div>
-          <div class="submission-time" id="submissionTime">Save a play to publish it.</div>
+          <div class="submission-title" id="submissionTitle">NO DROP SUBMITTED</div>
+          <div class="submission-time" id="submissionTime">Save a drop to publish it.</div>
         </div>
       </div>
       <span class="pill" id="livePill">NOT LIVE</span>
@@ -46,20 +46,24 @@
     </div>
 
     <section class="panel">
-      <h2>POST / UPDATE EXCLUSIVE PLAY</h2>
+      <h2>POST / UPDATE PHANTOM DROP</h2>
       <div class="grid2">
         <div class="field"><label>SPORT</label><input id="sport" placeholder="NBA • TONIGHT"></div>
         <div class="field"><label>MATCHUP</label><input id="matchup" placeholder="Lakers vs Warriors"></div>
       </div>
       <div class="field"><label>PICK</label><input id="pickText" placeholder="Player Over 24.5 Points"></div>
-      <div class="field"><label>ODDS / BOOK</label><input id="odds" placeholder="-115 • DraftKings"></div>
+      <div class="grid2">
+        <div class="field"><label>AMERICAN ODDS</label><input id="americanOdds" type="number" placeholder="-115"></div>
+        <div class="field"><label>UNITS</label><input id="units" type="number" min="0.5" step="0.5" value="5"></div>
+      </div>
+      <div class="field"><label>BOOK / ODDS NOTE</label><input id="odds" placeholder="DraftKings • -115"></div>
       <div class="field"><label>STATUS</label><select id="isLive"><option value="true">LIVE</option><option value="false">HIDDEN / NO PLAY</option></select></div>
       <div class="admin-actions">
-        <button class="btn btn-primary" id="savePlay">SUBMIT PLAY</button>
-        <button class="btn btn-dark" id="editPlay">EDIT PLAY</button>
+        <button class="btn btn-primary" id="savePlay">SUBMIT DROP</button>
+        <button class="btn btn-dark" id="editPlay">EDIT DROP</button>
       </div>
       <div class="admin-actions" style="margin-top:8px">
-        <button class="btn btn-danger" id="lockPlay">LOCK PLAY</button>
+        <button class="btn btn-danger" id="lockPlay">LOCK DROP</button>
         <button class="btn btn-dark" id="refreshPreview">REFRESH PREVIEW</button>
       </div>
       <div class="status-msg" id="saveMsg"></div>
@@ -73,27 +77,36 @@
         <button class="btn btn-dark" id="showUnlocked">UNLOCKED VIEW</button>
       </div>
       <div class="preview-frame">
-        <div class="preview-top"><span>PHANTOM PICKS</span><span>EXCLUSIVE PLAY</span></div>
+        <div class="preview-top"><span>PHANTOM PICKS</span><span>PHANTOM DROP</span></div>
         <div class="preview-card" id="previewCard">
-          <div class="card-top"><span>PHANTOM'S EXCLUSIVE</span><span class="preview-lock-label" id="previewLockLabel">LOCKED</span></div>
+          <div class="card-top"><span>PHANTOM'S DROP</span><span class="preview-lock-label" id="previewLockLabel">LOCKED</span></div>
           <div class="blurred-content">
             <div class="sport" id="previewSport">SPORT • TODAY</div>
             <div class="matchup" id="previewMatchup">Matchup Hidden</div>
-            <div class="pick" id="previewPick">Exclusive Pick Hidden</div>
+            <div class="pick" id="previewPick">Phantom Drop Hidden</div>
             <div class="details" id="previewOdds">Odds Hidden</div>
           </div>
-          <div class="lock-overlay"><div class="lock-icon">🔒</div><strong>PLAY LOCKED</strong><span>Unlock to reveal the full pick.</span></div>
+          <div class="lock-overlay"><div class="lock-icon">🔒</div><strong>DROP LOCKED</strong><span>Unlock to reveal the full pick.</span></div>
         </div>
-        <div class="preview-unlock"><span>UNLOCK EXCLUSIVE PLAY</span><b>$20</b></div>
-        <div class="preview-note">ONE-TIME PURCHASE • NO REFUNDS • LOSS/PUSH ROLLS ACCESS TO THE NEXT EXCLUSIVE PLAY</div>
+        <div class="preview-unlock"><span>UNLOCK PHANTOM DROP</span><b>$20</b></div>
+        <div class="preview-note">ONE-TIME PURCHASE • NO REFUNDS • LOSS/PUSH ROLLS ACCESS TO THE NEXT PHANTOM DROP</div>
       </div>
     </section>
 
     <section class="panel">
-      <h2>PREVIOUS EXCLUSIVE PLAYS</h2>
-      <p class="admin-note">Your settled Exclusive Play history appears here automatically after grading.</p>
+      <h2>PHANTOM PERFORMANCE</h2>
+      <div class="admin-performance">
+        <div><span>RECORD</span><strong id="adminRecord">0-0-0</strong></div>
+        <div><span>PROFIT</span><strong id="adminProfit">$0.00</strong></div>
+        <div><span>ROI</span><strong id="adminRoi">0.0%</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>PREVIOUS PHANTOM DROPS</h2>
+      <p class="admin-note">Your settled Phantom Drop history appears here automatically after grading.</p>
       <div class="history-list" id="adminHistory">
-        <div class="history-empty">No previous Exclusive Plays yet.</div>
+        <div class="history-empty">No previous Phantom Drops yet.</div>
       </div>
     </section>
 

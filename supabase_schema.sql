@@ -1,5 +1,5 @@
--- Phantom Exclusive V4
--- Run in Supabase SQL Editor.
+-- Phantom Drop V8
+-- Run in Supabase SQL Editor. Safe to run over the previous v7 schema.
 
 create table if not exists public.exclusive_current (
   id integer primary key,
@@ -7,6 +7,8 @@ create table if not exists public.exclusive_current (
   matchup text,
   pick_text text,
   odds text,
+  american_odds integer,
+  units numeric default 5,
   is_live boolean default false,
   is_locked boolean default false,
   is_settled boolean default false,
@@ -15,9 +17,11 @@ create table if not exists public.exclusive_current (
 
 alter table public.exclusive_current add column if not exists is_locked boolean default false;
 alter table public.exclusive_current add column if not exists is_settled boolean default false;
+alter table public.exclusive_current add column if not exists american_odds integer;
+alter table public.exclusive_current add column if not exists units numeric default 5;
 
-insert into public.exclusive_current (id, sport, matchup, pick_text, odds, is_live, is_locked, is_settled)
-values (1, '', '', '', '', false, false, false)
+insert into public.exclusive_current (id, sport, matchup, pick_text, odds, american_odds, units, is_live, is_locked, is_settled)
+values (1, '', '', '', '', null, 5, false, false, false)
 on conflict (id) do nothing;
 
 create table if not exists public.exclusive_results (
@@ -27,37 +31,30 @@ create table if not exists public.exclusive_results (
   matchup text,
   pick_text text,
   odds text,
+  american_odds integer,
+  units numeric default 5,
+  profit numeric default 0,
   created_at timestamptz default now()
 );
+
+alter table public.exclusive_results add column if not exists american_odds integer;
+alter table public.exclusive_results add column if not exists units numeric default 5;
+alter table public.exclusive_results add column if not exists profit numeric default 0;
 
 alter table public.exclusive_current enable row level security;
 alter table public.exclusive_results enable row level security;
 
--- Remove old prototype write policies if they exist.
 drop policy if exists "exclusive current temporary write" on public.exclusive_current;
 drop policy if exists "exclusive results temporary insert" on public.exclusive_results;
 
--- Keep public read access for customer-facing record/status.
 drop policy if exists "exclusive current public read" on public.exclusive_current;
-create policy "exclusive current public read"
-on public.exclusive_current for select
-using (true);
+create policy "exclusive current public read" on public.exclusive_current for select using (true);
 
 drop policy if exists "exclusive results public read" on public.exclusive_results;
-create policy "exclusive results public read"
-on public.exclusive_results for select
-using (true);
+create policy "exclusive results public read" on public.exclusive_results for select using (true);
 
--- Only signed-in Supabase users can modify the Command Center data.
 drop policy if exists "exclusive current authenticated write" on public.exclusive_current;
-create policy "exclusive current authenticated write"
-on public.exclusive_current for all
-to authenticated
-using (true)
-with check (true);
+create policy "exclusive current authenticated write" on public.exclusive_current for all to authenticated using (true) with check (true);
 
 drop policy if exists "exclusive results authenticated insert" on public.exclusive_results;
-create policy "exclusive results authenticated insert"
-on public.exclusive_results for insert
-to authenticated
-with check (true);
+create policy "exclusive results authenticated insert" on public.exclusive_results for insert to authenticated with check (true);

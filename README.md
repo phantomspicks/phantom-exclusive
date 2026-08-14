@@ -1,11 +1,21 @@
-# Phantom Picks Exclusive — V7
+# Phantom Picks — Phantom Drop V8
 
-New:
-- Public page now shows PREVIOUS EXCLUSIVE PLAYS.
-- Admin Command Center now has PREVIOUS EXCLUSIVE PLAYS.
-- History pulls automatically from `exclusive_results`.
-- Each settled play shows result, sport, pick, matchup, odds/book, and date.
-- Public view shows the latest 10.
-- Admin view shows the full settled history currently returned by Supabase.
+This build keeps the original v7 visual system and adds the newer Phantom Drop performance experience.
 
-No new Supabase SQL is needed if V4+ is already installed.
+## Added
+- Renamed customer-facing "Exclusive Play" to **Phantom Drop**.
+- "How It Works" breakdown: Win / Loss / Push / One-Time Fee.
+- Phantom Performance: **Record, Profit, ROI** calculated from graded results.
+- Previous Phantom Drops with **All / Wins / Losses / Pushes** filters.
+- Per-result date, matchup, pick, American odds, units, result and profit.
+- Expand/collapse **View All Results**.
+- Unit Size & Calculations section with 5U default, 1U = $2,000 and profit examples.
+- Expanded Phantom footer and full Phantom Drop terms.
+- Command Center fields for **American Odds** and **Units**.
+- Automatic profit calculation when a Phantom Drop is graded.
+- Command Center Phantom Performance summary.
+
+## Required Supabase update
+Run `supabase_schema.sql` in the Supabase SQL Editor once. It safely adds `american_odds`, `units`, and `profit` columns to the existing tables while preserving the v7 tables and policies.
+
+Then keep your existing Supabase values in `config.js` and deploy the folder exactly as before.

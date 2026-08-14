@@ -1,18 +1,110 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phantom Picks — Exclusive Play</title><link rel="stylesheet" href="styles.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
-<body><main class="page">
-<header class="brand"><div class="brand-mark">PP</div><div><div class="brand-name">PHANTOM PICKS</div><div class="brand-sub">EXCLUSIVE PLAY</div></div></header>
-<section class="hero"><div class="eyebrow">ONE-TIME • $20</div><h1>EXCLUSIVE<br><span>PLAY</span></h1><p class="intro">One purchase gets you access until an Exclusive Play wins. Losses and pushes roll your access forward to the next release.</p></section>
-<section class="record-card"><div><div class="record-label">EXCLUSIVE PLAY RECORD</div><div class="record-value"><span id="wins">0</span>-<span id="losses">0</span>-<span id="pushes">0</span></div></div><div class="record-meta"><span id="winRate">0%</span><small>WIN RATE</small></div></section>
-<section class="play-shell"><div class="status-row"><span class="live-dot"></span><span id="playStatus">EXCLUSIVE PLAY IS LIVE</span></div>
-<div class="play-card"><div class="card-top"><span>PHANTOM'S EXCLUSIVE</span><span class="lock">LOCKED</span></div><div class="blurred-content"><div class="sport" id="sport">SPORT • TODAY</div><div class="matchup" id="matchup">Matchup Hidden</div><div class="pick" id="pick">Exclusive Pick Hidden</div><div class="details" id="odds">Odds Hidden</div></div><div class="lock-overlay"><div class="lock-icon">🔒</div><strong>PLAY LOCKED</strong><span>Unlock to reveal the full pick.</span></div></div>
-<a class="unlock" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener"><span>UNLOCK EXCLUSIVE PLAY</span><b>$20</b></a><p class="fine-print">ONE-TIME PURCHASE • NO REFUNDS</p></section>
-<section class="rules"><div class="rule"><b>WIN</b><span>Access ends after the winner.</span></div><div class="rule"><b>LOSS</b><span>Next Exclusive Play is included.</span></div><div class="rule"><b>PUSH</b><span>Next Exclusive Play is included.</span></div></section>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Phantom Picks — Phantom Drop</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main class="page">
+  <header class="brand">
+    <div class="brand-mark">PP</div>
+    <div>
+      <div class="brand-name">PHANTOM PICKS</div>
+      <div class="brand-sub">PHANTOM DROP</div>
+    </div>
+  </header>
 
-<section class="history-section">
-  <div class="record-label" style="margin:18px 2px 10px">PREVIOUS EXCLUSIVE PLAYS</div>
-  <div class="history-list" id="publicHistory">
-    <div class="history-empty">No previous Exclusive Plays yet.</div>
-  </div>
-</section>
+  <section class="hero">
+    <div class="eyebrow">ONE-TIME • $20</div>
+    <h1>PHANTOM<br><span>DROP</span></h1>
+    <p class="intro">One purchase gets you access until a Phantom Drop wins. Losses and pushes roll your access forward to the next release.</p>
+  </section>
 
-<footer><span>PHANTOM PICKS</span><span>EXCLUSIVE ACCESS • ONE PLAY AT A TIME</span></footer></main><script src="config.js"></script><script src="app.js"></script></body></html>
+  <section class="play-shell">
+    <div class="status-row"><span class="live-dot"></span><span id="playStatus">PHANTOM DROP IS LIVE</span></div>
+    <div class="play-card">
+      <div class="card-top"><span>PHANTOM'S DROP</span><span class="lock">LOCKED</span></div>
+      <div class="blurred-content">
+        <div class="sport" id="sport">SPORT • TODAY</div>
+        <div class="matchup" id="matchup">Matchup Hidden</div>
+        <div class="pick" id="pick">Phantom Drop Hidden</div>
+        <div class="details" id="odds">Odds Hidden</div>
+      </div>
+      <div class="lock-overlay">
+        <div class="lock-icon">🔒</div>
+        <strong>DROP LOCKED</strong>
+        <span>Unlock to reveal the full pick.</span>
+      </div>
+    </div>
+    <a class="unlock" href="https://whop.com/phantom-picks-b643/exclusive-play-92/" target="_blank" rel="noopener"><span>UNLOCK PHANTOM DROP</span><b>$20</b></a>
+    <p class="fine-print">ONE-TIME PURCHASE • NO REFUNDS</p>
+  </section>
+
+  <section class="info-panel how-it-works">
+    <div class="section-kicker">HOW IT WORKS</div>
+    <div class="how-grid">
+      <article class="how-item"><div class="how-icon">♛</div><b>WIN</b><p>If today's Phantom Drop wins, your access ends. Purchase the next drop when you're ready.</p></article>
+      <article class="how-item"><div class="how-icon">×</div><b>LOSS</b><p>If today's Phantom Drop loses, your access continues to future Phantom Drops until one wins.</p></article>
+      <article class="how-item"><div class="how-icon">=</div><b>PUSH</b><p>If today's Phantom Drop pushes, the next Phantom Drop is included at no additional charge.</p></article>
+      <article class="how-item"><div class="how-icon">▣</div><b>ONE-TIME FEE</b><p>$20 unlocks today's Phantom Drop. No monthly commitment and no refunds.</p></article>
+    </div>
+  </section>
+
+  <section class="info-panel performance-panel">
+    <div class="section-kicker">PHANTOM PERFORMANCE</div>
+    <div class="performance-grid">
+      <div class="performance-stat"><small>RECORD</small><strong id="recordFull">0-0-0</strong></div>
+      <div class="performance-stat"><small>PROFIT</small><strong id="totalProfit">$0.00</strong></div>
+      <div class="performance-stat"><small>ROI</small><strong id="roi">0.0%</strong></div>
+    </div>
+  </section>
+
+  <section class="info-panel history-section">
+    <div class="section-title">PREVIOUS PHANTOM DROPS</div>
+    <div class="history-tabs" id="historyTabs">
+      <button class="active" data-filter="ALL">ALL</button>
+      <button data-filter="WIN">WINS</button>
+      <button data-filter="LOSS">LOSSES</button>
+      <button data-filter="PUSH">PUSHES</button>
+    </div>
+    <div class="history-list" id="publicHistory">
+      <div class="history-empty">No previous Phantom Drops yet.</div>
+    </div>
+    <button class="view-all" id="viewAllResults" type="button">VIEW ALL RESULTS <span>›</span></button>
+  </section>
+
+  <section class="info-panel unit-panel">
+    <div class="section-kicker">UNIT SIZE &amp; CALCULATIONS</div>
+    <div class="unit-block">
+      <small>DEFAULT UNIT SIZE</small>
+      <strong>5U</strong>
+      <b>1U = $2,000</b>
+      <p>Default Risk: $10,000</p>
+    </div>
+    <div class="unit-divider"></div>
+    <div class="unit-copy">
+      <small>PROFIT CALCULATION</small>
+      <p>Profit is calculated automatically from American odds using the posted unit size. A loss deducts the amount risked; a push returns $0.</p>
+      <button type="button" id="profitExamples">VIEW EXAMPLES →</button>
+      <div class="profit-examples hidden" id="profitExamplesBox">
+        <div><span>5U at -110</span><b>+$9,090.91</b></div>
+        <div><span>5U at +120</span><b>+$12,000.00</b></div>
+        <div><span>5U Loss</span><b>-$10,000.00</b></div>
+        <div><span>Push</span><b>$0.00</b></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="phantom-footer">
+    <div class="footer-brand"><div class="brand-mark small">PP</div><div><strong>PHANTOM</strong><span>PICKS</span></div></div>
+    <div class="footer-points"><span>○ <b>ONE PLAY.<br>MAX CONFIDENCE.</b></span><span>ϟ <b>HIGHEST CONVICTION<br>DAILY.</b></span><span>▥ <b>RESULTS SPEAK<br>FOR THEMSELVES.</b></span></div>
+    <p><b>Phantom Drop Terms:</b> Each Phantom Drop is a one-time $20 purchase. A loss keeps access active until a Phantom Drop wins. A push grants access to the next day's Phantom Drop at no additional charge. A win ends access. All sales are final; no refunds. Default wager sizing is 5U, with 1U = $2,000, unless otherwise stated.</p>
+  </footer>
+</main>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
